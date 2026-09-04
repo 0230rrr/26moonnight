@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🥮 中秋渡假別墅轟趴 | Mid-Autumn Tropical Pool House Party</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter & Noto Sans TC -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pool: {
+                            50: '#F0F9FF',
+                            100: '#E0F2FE',
+                            300: '#7DD3FC',
+                            500: '#00B4D8',
+                            600: '#0077B6',
+                            700: '#03045E',
+                        },
+                        sunset: {
+                            300: '#FFD166',
+                            500: '#FFB703',
+                            600: '#FB8500',
+                            700: '#E05D00',
+                        },
+                        mint: {
+                            400: '#48CAE4',
+                            500: '#00F5D4',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans TC', 'sans-serif'],
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'float-delayed': 'float 6s ease-in-out 3s infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'wave': 'wave 12s linear infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+                            '50%': { transform: 'translateY(-15px) rotate(2deg)' },
+                        },
+                        wave: {
+                            '0%': { transform: 'translateX(0)' },
+                            '100%': { transform: 'translateX(-50%)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Glassmorphism Styles */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+        }
+        .glass-card-dark {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .text-gradient-pool {
+            background: linear-gradient(135deg, #0077B6 0%, #00B4D8 50%, #FB8500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .text-gradient-sunset {
+            background: linear-gradient(135deg, #FFB703 0%, #FB8500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #E0F2FE;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #00B4D8;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-b from-pool-50 via-sky-50 to-orange-50 text-slate-800 font-sans min-h-screen relative overflow-x-hidden">
+
+    <!-- Background Animated Water Canvas -->
+    <canvas id="waterCanvas" class="fixed top-0 left-0 w-full h-full pointer-events-none z-0 opacity-40"></canvas>
+
+    <!-- FLOATING BACKGROUND DECORATIONS -->
+    <div class="fixed top-20 left-10 text-4xl animate-float pointer-events-none z-0 opacity-70">🛟</div>
+    <div class="fixed top-1/3 right-8 text-5xl animate-float-delayed pointer-events-none z-0 opacity-70">🍹</div>
+    <div class="fixed bottom-1/4 left-8 text-4xl animate-float pointer-events-none z-0 opacity-70">🏝️</div>
+
+    <!-- Navigation Bar -->
+    <nav class="sticky top-0 z-50 glass-nav shadow-sm transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-pool-500 to-sunset-500 flex items-center justify-center text-white text-2xl shadow-lg shadow-pool-500/30">
+                        🥮
+                    </div>
+                    <div>
+                        <span class="font-black text-xl tracking-wider text-slate-800 block leading-tight">中秋渡假轟趴</span>
+                        <span class="text-xs font-semibold text-pool-600 tracking-widest uppercase">House Party 2026</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8 text-sm font-semibold text-slate-700">
+                    <a href="#about" class="hover:text-pool-600 transition-colors">派對亮點</a>
+                    <a href="#schedule" class="hover:text-pool-600 transition-colors">活動粗流</a>
+                    <a href="#venue" class="hover:text-pool-600 transition-colors">豪宅開箱</a>
+                    <a href="#faq" class="hover:text-pool-600 transition-colors">常見問題</a>
+                </div>
+
+                <!-- Header CTA Button -->
+                <div class="hidden sm:block">
+                    <button onclick="openRegistrationModal()" class="relative group px-6 py-3 rounded-full font-bold text-white shadow-lg shadow-pool-500/30 bg-gradient-to-r from-pool-500 via-sky-500 to-sunset-500 hover:scale-105 active:scale-95 transition-all duration-200">
+                        <span class="relative z-10 flex items-center gap-2">
+                            <i class="fa-solid fa-ticket"></i> 立即搶票報名
+                        </span>
+                        <div class="absolute inset-0 rounded-full bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobileMenuBtn" class="text-slate-700 hover:text-pool-600 focus:outline-none p-2">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobileMenu" class="hidden md:hidden glass-nav border-b border-sky-100 px-4 pt-2 pb-6 space-y-3">
+            <a href="#about" class="block px-3 py-2 rounded-lg text-slate-700 font-medium hover:bg-pool-50">派對亮點</a>
+            <a href="#schedule" class="block px-3 py-2 rounded-lg text-slate-700 font-medium hover:bg-pool-50">活動粗流</a>
+            <a href="#venue" class="block px-3 py-2 rounded-lg text-slate-700 font-medium hover:bg-pool-50">豪宅開箱</a>
+            <a href="#faq" class="block px-3 py-2 rounded-lg text-slate-700 font-medium hover:bg-pool-50">常見問題</a>
+            <button onclick="openRegistrationModal()" class="w-full mt-2 py-3 rounded-xl font-bold text-white bg-gradient-to-r from-pool-500 to-sunset-500 shadow-md">
+                <i class="fa-solid fa-ticket mr-2"></i> 立即搶票報名
+            </button>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="relative pt-12 pb-20 md:pt-20 md:pb-32 overflow-hidden z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
+            
+            <!-- Badge -->
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card border border-pool-300 text-pool-700 text-sm font-bold shadow-sm mb-6 animate-bounce">
+                <span class="flex h-2.5 w-2.5 rounded-full bg-sunset-500 animate-ping"></span>
+                <span>✨ 校內外台生 x 澳生 跨校中秋年度盛會</span>
+            </div>
+
+            <!-- Title -->
+            <h1 class="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-slate-900 leading-tight mb-6">
+                渡假別墅泳池 <span class="text-gradient-pool">🥮 中秋轟趴</span><br>
+                <span class="text-gradient-sunset text-3xl sm:text-5xl md:text-6xl">BBQ x 特調 x 煙火 x 睡衣派對</span>
+            </h1>
+
+            <!-- Description -->
+            <p class="max-w-2xl mx-auto text-lg sm:text-xl text-slate-600 mb-10 leading-relaxed">
+                告別無聊中秋！自行前往上海迪士尼旁奢華別墅，盡情享受清涼泳池水槍大戰、庭院大地遊戲、香檳塔中秋晚會、美高風雙人舞會、調酒評比與深夜枕頭戰！
+            </p>
+
+            <!-- CTA Buttons -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+                <button onclick="openRegistrationModal()" class="w-full sm:w-auto px-8 py-4 rounded-2xl font-bold text-lg text-white bg-gradient-to-r from-pool-500 via-sky-500 to-sunset-500 shadow-xl shadow-pool-500/30 hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center gap-3">
+                    <i class="fa-solid fa-paper-plane"></i> 搶先報名搶位 (問卷星)
+                </button>
+                <a href="#schedule" class="w-full sm:w-auto px-8 py-4 rounded-2xl font-bold text-lg text-slate-700 glass-card hover:bg-white/80 transition-all duration-200 border border-slate-200 flex items-center justify-center gap-2">
+                    <i class="fa-regular fa-compass"></i> 探索活動流程
+                </a>
+            </div>
+
+            <!-- Countdown Timer Card -->
+            <div class="max-w-3xl mx-auto glass-card rounded-3xl p-6 sm:p-8 shadow-2xl border border-white/80">
+                <div class="text-xs sm:text-sm font-bold uppercase tracking-widest text-pool-600 mb-4 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-clock"></i> 距離早鳥優惠截止倒數 (9/14 23:59 止)
+                </div>
+                <div class="grid grid-cols-4 gap-3 sm:gap-6 text-center">
+                    <div class="bg-white/80 rounded-2xl p-3 sm:p-4 shadow-sm border border-sky-100">
+                        <span id="days" class="text-3xl sm:text-5xl font-black text-pool-600 block">00</span>
+                        <span class="text-xs text-slate-500 font-semibold">天</span>
+                    </div>
+                    <div class="bg-white/80 rounded-2xl p-3 sm:p-4 shadow-sm border border-sky-100">
+                        <span id="hours" class="text-3xl sm:text-5xl font-black text-pool-600 block">00</span>
+                        <span class="text-xs text-slate-500 font-semibold">時</span>
+                    </div>
+                    <div class="bg-white/80 rounded-2xl p-3 sm:p-4 shadow-sm border border-sky-100">
+                        <span id="minutes" class="text-3xl sm:text-5xl font-black text-pool-600 block">00</span>
+                        <span class="text-xs text-slate-500 font-semibold">分</span>
+                    </div>
+                    <div class="bg-white/80 rounded-2xl p-3 sm:p-4 shadow-sm border border-sky-100">
+                        <span id="seconds" class="text-3xl sm:text-5xl font-black text-sunset-600 block">00</span>
+                        <span class="text-xs text-slate-500 font-semibold">秒</span>
+                    </div>
+                </div>
+                <p class="text-xs text-slate-500 mt-4">註：早鳥優惠與三人團報可疊加享 81 折優惠（最低 125 元）！</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- HIGHLIGHTS SECTION -->
+    <section id="about" class="py-16 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-4">
+                    🌊 獨家六大派對亮點
+                </h2>
+                <p class="text-slate-600 text-lg">從白天狂歡到深夜，打造最chill的渡假別墅派對體驗！</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Highlight 1 -->
+                <div class="glass-card rounded-3xl p-8 hover:-translate-y-2 transition-all duration-300 shadow-lg hover:shadow-xl group border-t-4 border-pool-500">
+                    <div class="w-16 h-16 rounded-2xl bg-pool-100 text-pool-600 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform">
+                        🏊‍♂️
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-3">戶外泳池 Party</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        水槍大戰、沙灘排球比賽與泳圈拍照打卡，嗨翻夏末秋初！
+                    </p>
+                </div>
+
+                <!-- Highlight 2 -->
+                <div class="glass-card rounded-3xl p-8 hover:-translate-y-2 transition-all duration-300 shadow-lg hover:shadow-xl group border-t-4 border-sunset-500">
+                    <div class="w-16 h-16 rounded-2xl bg-amber-100 text-sunset-600 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform">
+                        🥮
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-3">夕陽 BBQ x 中秋晚會</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        香檳塔開幕式、交換月餅儀式，搭配香噴噴木炭烤肉與招牌古早味台灣滷肉飯！
+                    </p>
+                </div>
+
+                <!-- Highlight 3 -->
+                <div class="glass-card rounded-3xl p-8 hover:-translate-y-2 transition-all duration-300 shadow-lg hover:shadow-xl group border-t-4 border-mint-500">
+                    <div class="w-16 h-16 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform">
+                        🍸
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-3">調酒比賽 & 酒桌 Game</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        特製專屬調酒！可自由報名當「調酒參賽者」或「品嚐評審」，搭配狼人殺、阿瓦隆多人群體酒桌遊戲。
+                    </p>
+                </div>
+
+                <!-- Highlight 4 -->
+                <div class="glass-card rounded-3xl p-8 hover:-translate-y-2 transition-all duration-300 shadow-lg hover:shadow-xl group border-t-4 border-purple-500">
+                    <div class="w-16 h-16 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform">
+                        🎆
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-3">仙女棒 x 天燈許願 x 迪士尼煙火</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        露台視角遠眺迪士尼璀璨煙火秀！手拿仙女棒打卡、施放許願天燈，浪漫指數破表。
+                    </p>
+                </div>
+
+                <!-- Highlight 5 -->
+                <div class="glass-card rounded-3xl p-8 hover:-translate-y-2 transition-all duration-300 shadow-lg hover:shadow-xl group border-t-4 border-pink-500">
+                    <div class="w-16 h-16 rounded-2xl bg-pink-100 text-pink-600 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform">
+                        🥊
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-3">熱血刺激睡衣派對</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        換上睡衣！展開刺激枕頭戰、對抗遊戲、生存遊戲與敗者懲罰時間，深夜歡笑不斷。
+                    </p>
+                </div>
+
+                <!-- Highlight 6 -->
+                <div class="glass-card rounded-3xl p-8 hover:-translate-y-2 transition-all duration-300 shadow-lg hover:shadow-xl group border-t-4 border-sky-500">
+                    <div class="w-16 h-16 rounded-2xl bg-sky-100 text-sky-600 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform">
+                        💃
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-3">美高風舞會 x 第一支舞</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        美高畢業晚會 Dresscode，現場教學「第一支舞」，雙圈變換舞伴，輕鬆認識新朋友！
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- SCHEDULE SECTION -->
+    <section id="schedule" class="py-16 relative z-10 bg-white/40">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <span class="text-pool-600 font-bold tracking-wider text-sm uppercase">Full Schedule Flow</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-1 mb-4">🗓️ 活動行程總覽 (9/26-9/27)</h2>
+                <p class="text-slate-600">從下午簽到選房到深夜睡衣對抗賽，精彩活動不間斷！</p>
+                
+                <!-- Filter Tabs -->
+                <div class="inline-flex p-1 rounded-2xl glass-card mt-6 border border-sky-100">
+                    <button id="btn-all" onclick="filterTimeline('all')" class="tab-btn px-5 py-2 rounded-xl text-sm font-bold transition-all bg-pool-500 text-white shadow-sm">
+                        全部流程
+                    </button>
+                    <button id="btn-day" onclick="filterTimeline('day')" class="tab-btn px-5 py-2 rounded-xl text-sm font-bold text-slate-600 hover:text-pool-600 transition-all">
+                        ☀️ 日間狂歡 (13:00 - 18:00)
+                    </button>
+                    <button id="btn-night" onclick="filterTimeline('night')" class="tab-btn px-5 py-2 rounded-xl text-sm font-bold text-slate-600 hover:text-pool-600 transition-all">
+                        🌙 夜晚微醺 (18:00 - 深夜)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Timeline Container -->
+            <div class="relative border-l-2 border-pool-300 ml-4 sm:ml-32 space-y-8">
+
+                <!-- Item 1 -->
+                <div class="timeline-item day relative pl-6 sm:pl-8 group">
+                    <div class="absolute -left-[11px] top-1.5 w-5 h-5 rounded-full bg-pool-500 border-4 border-white shadow-sm"></div>
+                    <span class="hidden sm:block absolute -left-32 top-1 w-24 text-right font-black text-pool-600 text-sm">13:00 - 13:30</span>
+                    <div class="glass-card rounded-2xl p-5 hover:shadow-md transition-all">
+                        <span class="sm:hidden inline-block px-2.5 py-0.5 rounded-md bg-pool-100 text-pool-700 font-bold text-xs mb-2">13:00 - 13:30</span>
+                        <h4 class="font-bold text-slate-800 text-lg flex items-center gap-2">🏡 Villa 抵達簽到 & 選房間</h4>
+                        <p class="text-slate-600 text-sm mt-1">參加者自行前往上海浦東環嶼別墅，簽到登記、領取房卡與分組物料，開箱奢華別墅！</p>
+                    </div>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="timeline-item day relative pl-6 sm:pl-8 group">
+                    <div class="absolute -left-[11px] top-1.5 w-5 h-5 rounded-full bg-pool-500 border-4 border-white shadow-sm"></div>
+                    <span class="hidden sm:block absolute -left-32 top-1 w-24 text-right font-black text-pool-600 text-sm">13:30 - 14:00</span>
+                    <div class="glass-card rounded-2xl p-5 hover:shadow-md transition-all">
+                        <span class="sm:hidden inline-block px-2.5 py-0.5 rounded-md bg-pool-100 text-pool-700 font-bold text-xs mb-2">13:30 - 14:00</span>
+                        <h4 class="font-bold text-slate-800 text-lg flex items-center gap-2">🤝 歡樂破冰熱身</h4>
+                        <p class="text-slate-600 text-sm mt-1">輕鬆破冰小遊戲，打破陌生感，迅速認識同組的熱情夥伴。</p>
+                    </div>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="timeline-item day relative pl-6 sm:pl-8 group">
+                    <div class="absolute -left-[11px] top-1.5 w-5 h-5 rounded-full bg-pool-500 border-4 border-white shadow-sm"></div>
+                    <span class="hidden sm:block absolute -left-32 top-1 w-24 text-right font-black text-pool-600 text-sm">14:00 - 15:00</span>
+                    <div class="glass-card rounded-2xl p-5 hover:shadow-md transition-all">
+                        <span class="sm:hidden inline-block px-2.5 py-0.5 rounded-md bg-pool-100 text-pool-700 font-bold text-xs mb-2">14:00 - 15:00</span>
+                        <h4 class="font-bold text-slate-800 text-lg flex items-center gap-2">🌳 庭院團康大地遊戲</h4>
+                        <p class="text-slate-600 text-sm mt-1">轉移至千平米戶外大庭院，展開熱血爆笑的大地團康競賽！</p>
+                    </div>
+                </div>
+
+                <!-- Item 4 -->
+                <div class="timeline-item day relative pl-6 sm:pl-8 group">
+                    <div class="absolute -left-[11px] top-1.5 w-5 h-5 rounded-full bg-sunset-500 border-4 border-white shadow-sm"></div>
+                    <span class="hidden sm:block absolute -left-32 top-1 w-24 text-right font-black text-sunset-600 text-sm">15:00 - 16:00</span>
+                    <div class="glass-card rounded-2xl p-5 hover:shadow-md transition-all border-l-4 border-sunset-500">
+                        <span class="sm:hidden inline-block px-2.5 py-0.5 rounded-md bg-sunset-100 text-sunset-700 font-bold text-xs mb-2">15:00 - 16:00</span>
+                        <h4 class="font-bold text-slate-800 text-lg flex items-center gap-2">🌊 戶外泳池 Party</h4>
+                        <p class="text-slate-600 text-sm mt-1">水槍大戰、沙灘排球比賽與泳圈拍照打卡，嗨翻夏末秋初！</p>
+                    </div>
+                </div>
+
+                <!-- Item 5 -->
+                <div class="timeline-item day relative pl-6 sm:pl-8 group">
+                    <div class="absolute -left-[11px] top-1.5 w-5 h-5 rounded-full bg-sunset-500 border-4 border-white shadow-sm"></div>
+                    <span class="hidden sm:block absolute -left-32 top-1 w-24 text-right font-black text-sunset-600 text-sm">16:30 - 18:00</span>
+                    <div class="glass-card rounded-2xl p-5 hover:shadow-md transition-all">
+                        <span class="sm:hidden inline-block px-2.5 py-0.5 rounded-md bg-sunset-100 text-sunset-700 font-bold text-xs mb-2">16:30 - 18:00</span>
+                        <h4 class="font-bold text-slate-800 text-lg flex items-center gap-2">🥩 夕陽烤肉 BBQ & 中秋晚會</h4>
+                        <p class="text-slate-600 text-sm mt-1">享用木炭烤肉與古早味滷肉飯！晚會包含「香檳塔開幕式」與「交換月餅儀式」，歡聚歡慶中秋！</p>
+                    </div>
+                </div>
+
+                <!-- Item 6 -->
+                <div class="timeline-item night relative pl-6 sm:pl-8 group">
+                    <div class="absolute -left-[11px] top-1.5 w-5 h-5 rounded-full bg-purple-600 border-4 border-white shadow-sm"></div>
+                    <span class="hidden sm:block absolute -left-32 top-1 w-24 text-right font-black text-purple-600 text-sm">18:00 - 19:00</span>
+                    <div class="glass-card rounded-2xl p-5 hover:shadow-md transition-all">
+                        <span class="sm:hidden inline-block px-2.5 py-0.5 rounded-md bg-purple-100 text-purple-700 font-bold text-xs mb-2">18:00 - 19:00</span>
+                        <h4 class="font-bold text-slate-800 text-lg flex items-center gap-2">💃 歐美美高畢業晚會風舞會</h4>
+                        <p class="text-slate-600 text-sm mt-1">換上美高禮服/制服風格 Dresscode！現場教學「第一支舞」，圍成內外兩圈轉動更換舞伴，還有團體舞蹈與歡樂小遊戲！</p>
+                    </div>
+                </div>
+
+                <!-- Item 7 -->
+                <div class="timeline-item night relative pl-6 sm:pl-8 group">
+                    <div class="absolute -left-[11px] top-1.5 w-5 h-5 rounded-full bg-purple-600 border-4 border-white shadow-sm"></div>
+                    <span class="hidden sm:block absolute -left-32 top-1 w-24 text-right font-black text-purple-600 text-sm">19:00 - 20:00</span>
+                    <div class="glass-card rounded-2xl p-5 hover:shadow-md transition-all">
+                        <span class="sm:hidden inline-block px-2.5 py-0.5 rounded-md bg-purple-100 text-purple-700 font-bold text-xs mb-2">19:00 - 20:00</span>
+                        <h4 class="font-bold text-slate-800 text-lg flex items-center gap-2">✨ 仙女棒 x 天燈許願 x 迪士尼煙火秀</h4>
+                        <p class="text-slate-600 text-sm mt-1">手持仙女棒光影打卡、放飛天燈許願，並在 100 平米露台觀賞迪士尼璀璨煙火表演。</p>
+                    </div>
+                </div>
+
+                <!-- Item 8 -->
+                <div class="timeline-item night relative pl-6 sm:pl-8 group">
+                    <div class="absolute -left-[11px] top-1.5 w-5 h-5 rounded-full bg-indigo-600 border-4 border-white shadow-sm"></div>
+                    <span class="hidden sm:block absolute -left-32 top-1 w-24 text-right font-black text-indigo-600 text-sm">20:00 - 21:00</span>
+                    <div class="glass-card rounded-2xl p-5 hover:shadow-md transition-all">
+                        <span class="sm:hidden inline-block px-2.5 py-0.5 rounded-md bg-indigo-100 text-indigo-700 font-bold text-xs mb-2">20:00 - 21:00</span>
+                        <h4 class="font-bold text-slate-800 text-lg flex items-center gap-2">🗺️ 沉浸式夜遊 (RPG闖關/海龜湯)</h4>
+                        <p class="text-slate-600 text-sm mt-1">自由參與！探索別墅周邊，解答海龜湯謎題或進行 RPG 闖關解鎖隱藏玩法。</p>
+                    </div>
+                </div>
+
+                <!-- Item 9 -->
+                <div class="timeline-item night relative pl-6 sm:pl-8 group">
+                    <div class="absolute -left-[11px] top-1.5 w-5 h-5 rounded-full bg-indigo-600 border-4 border-white shadow-sm"></div>
+                    <span class="hidden sm:block absolute -left-32 top-1 w-24 text-right font-black text-indigo-600 text-sm">21:00 - 23:00</span>
+                    <div class="glass-card rounded-2xl p-5 hover:shadow-md transition-all">
+                        <span class="sm:hidden inline-block px-2.5 py-0.5 rounded-md bg-indigo-100 text-indigo-700 font-bold text-xs mb-2">21:00 - 23:00</span>
+                        <h4 class="font-bold text-slate-800 text-lg flex items-center gap-2">🍸 調酒比賽 & 多人酒桌 Game</h4>
+                        <p class="text-slate-600 text-sm mt-1">調酒愛好者現場發揮！可報名「參賽者」製作獨家調酒或報名「評審」品嚐評分，搭配狼人殺、阿瓦隆與酒桌遊戲。</p>
+                    </div>
+                </div>
+
+                <!-- Item 10 -->
+                <div class="timeline-item night relative pl-6 sm:pl-8 group">
+                    <div class="absolute -left-[11px] top-1.5 w-5 h-5 rounded-full bg-pink-500 border-4 border-white shadow-sm"></div>
+                    <span class="hidden sm:block absolute -left-32 top-1 w-24 text-right font-black text-pink-600 text-sm">24:00 - 25:00+</span>
+                    <div class="glass-card rounded-2xl p-5 hover:shadow-md transition-all border-l-4 border-pink-500">
+                        <span class="sm:hidden inline-block px-2.5 py-0.5 rounded-md bg-pink-100 text-pink-700 font-bold text-xs mb-2">24:00 - 25:00+</span>
+                        <h4 class="font-bold text-slate-800 text-lg flex items-center gap-2">🥊 熱血刺激睡衣派對 Pillow Party</h4>
+                        <p class="text-slate-600 text-sm mt-1">換上可愛睡衣！展開團體對抗遊戲、生存遊戲、枕頭大戰與輸家懲罰時間，歡笑通宵！</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- VENUE SHOWCASE SECTION -->
+    <section id="venue" class="py-16 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="glass-card rounded-3xl p-8 sm:p-12 shadow-2xl relative overflow-hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <span class="text-pool-600 font-bold text-sm tracking-widest uppercase">Shanghai Disney Resort Villa</span>
+                        <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-2 mb-6">
+                            🏰 迪士尼旁·上海環嶼別墅豪宅開箱
+                        </h2>
+                        <p class="text-slate-600 mb-6 leading-relaxed">
+                            位於上海迪士尼附近的獨棟奢華別墅（攜程/去哪兒可查「上海環嶼別墅」）！全屋中央空調，擁有 11 間 VIP 獨立衛浴客房，1000 平米戶外庭院與標準深度泳池、水中下沉式吧台及 100 平米觀景露台。
+                        </p>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-3">
+                                <div class="w-8 h-8 rounded-full bg-pool-100 text-pool-600 flex items-center justify-center font-bold text-sm shrink-0">✓</div>
+                                <div>
+                                    <h4 class="font-bold text-slate-800">1000平庭院 + 標準深水泳池 + 下沉式吧台</h4>
+                                    <p class="text-xs text-slate-500">配有造型泳圈、水槍設施與水中吧台小酌體驗</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <div class="w-8 h-8 rounded-full bg-pool-100 text-pool-600 flex items-center justify-center font-bold text-sm shrink-0">✓</div>
+                                <div>
+                                    <h4 class="font-bold text-slate-800">頂級娛樂設備一應俱全</h4>
+                                    <p class="text-xs text-slate-500">專業 KTV、街機 (4700款遊戲)、Switch (75寸4K)、台球、乒乓球、冰球、自動麻將機與德州撲克桌</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <div class="w-8 h-8 rounded-full bg-pool-100 text-pool-600 flex items-center justify-center font-bold text-sm shrink-0">✓</div>
+                                <div>
+                                    <h4 class="font-bold text-slate-800">多元房型與榻榻米通鋪選擇</h4>
+                                    <p class="text-xs text-slate-500">大床房 (3人)、雙床房 (4人) 或榻榻米大通鋪睡墊，男女分房安心舒適</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-8">
+                            <button onclick="openRegistrationModal()" class="px-6 py-3 rounded-xl font-bold text-white bg-pool-500 hover:bg-pool-600 shadow-md transition-colors">
+                                查看名額與票價細節 <i class="fa-solid fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Card Preview Mockup -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-4">
+                            <div class="h-48 rounded-2xl bg-cover bg-center shadow-md hover:scale-105 transition-transform" style="background-image: url('https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&w=600&q=80');"></div>
+                            <div class="h-32 rounded-2xl bg-cover bg-center shadow-md hover:scale-105 transition-transform" style="background-image: url('https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=600&q=80');"></div>
+                        </div>
+                        <div class="space-y-4 pt-6">
+                            <div class="h-32 rounded-2xl bg-cover bg-center shadow-md hover:scale-105 transition-transform" style="background-image: url('https://images.unsplash.com/photo-1555244162-803834f70033?auto=format&fit=crop&w=600&q=80');"></div>
+                            <div class="h-48 rounded-2xl bg-cover bg-center shadow-md hover:scale-105 transition-transform" style="background-image: url('https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=600&q=80');"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ SECTION -->
+    <section id="faq" class="py-16 relative z-10">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-extrabold text-slate-900">❓ 常見問題 FAQ</h2>
+                <p class="text-slate-600 mt-2">有任何疑問嗎？點擊下方查看解答！</p>
+            </div>
+
+            <div class="space-y-4">
+                <!-- FAQ Item 1 -->
+                <div class="glass-card rounded-2xl p-6 cursor-pointer" onclick="toggleFaq(this)">
+                    <div class="flex justify-between items-center font-bold text-slate-800 text-lg">
+                        <span>Q1. 我一個人報名會不會尷尬？</span>
+                        <i class="fa-solid fa-chevron-down text-pool-500 transition-transform"></i>
+                    </div>
+                    <div class="faq-answer hidden mt-3 text-slate-600 text-sm leading-relaxed border-t border-slate-100 pt-3">
+                        完全不會！本次活動特別規劃了「歡樂破冰」與「庭院大地遊戲」，許多同學都是單人報名，當天很快就能認識來自交大、復旦與各校的熱情夥伴！
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                <div class="glass-card rounded-2xl p-6 cursor-pointer" onclick="toggleFaq(this)">
+                    <div class="flex justify-between items-center font-bold text-slate-800 text-lg">
+                        <span>Q2. 需要準備什麼服裝或物料？</span>
+                        <i class="fa-solid fa-chevron-down text-pool-500 transition-transform"></i>
+                    </div>
+                    <div class="faq-answer hidden mt-3 text-slate-600 text-sm leading-relaxed border-t border-slate-100 pt-3">
+                        建議攜帶：1. 泳衣/泳褲（泳池 Party） 2. 美高舞會風格服裝/舊制服/半正式禮服 3. 睡衣（深夜睡衣派對） 4. 個人盥洗用品與替換乾爽衣物。
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="glass-card rounded-2xl p-6 cursor-pointer" onclick="toggleFaq(this)">
+                    <div class="flex justify-between items-center font-bold text-slate-800 text-lg">
+                        <span>Q3. 交通方式如何安排？</span>
+                        <i class="fa-solid fa-chevron-down text-pool-500 transition-transform"></i>
+                    </div>
+                    <div class="faq-answer hidden mt-3 text-slate-600 text-sm leading-relaxed border-t border-slate-100 pt-3">
+                        活動地點位於「上海市浦東區環嶼別墅」（迪士尼旁）。請參加者自行安排交通前往，建議可乘坐地鐵轉乘計程車，或與同行夥伴打車共乘前來。
+                    </div>
+                </div>
+
+                <!-- FAQ Item 4 -->
+                <div class="glass-card rounded-2xl p-6 cursor-pointer" onclick="toggleFaq(this)">
+                    <div class="flex justify-between items-center font-bold text-slate-800 text-lg">
+                        <span>Q4. 報名後如果臨時有事可以退費嗎？</span>
+                        <i class="fa-solid fa-chevron-down text-pool-500 transition-transform"></i>
+                    </div>
+                    <div class="faq-answer hidden mt-3 text-slate-600 text-sm leading-relaxed border-t border-slate-100 pt-3">
+                        9/18 23:59 前告知可全額退費；9/19 00:00 後退費 30%。名額隨時可以自行轉讓給其他人，只需告知總召溝通更換即可。
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER CTA BANNER -->
+    <footer class="bg-slate-900 text-white pt-16 pb-12 relative z-10 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+            <h2 class="text-3xl sm:text-5xl font-black mb-6 tracking-tight">
+                準備好加入這場 <span class="text-pool-300">最 High 中秋轟趴</span> 了嗎？
+            </h2>
+            <p class="text-slate-400 text-lg mb-8 max-w-2xl mx-auto">
+                名額有限，早鳥優惠即將截止！現在就填寫問卷星報名表單，鎖定你的Villa席位。
+            </p>
+            <button onclick="openRegistrationModal()" class="px-10 py-5 rounded-full font-bold text-xl text-slate-900 bg-gradient-to-r from-sunset-300 via-sunset-500 to-pool-300 shadow-2xl hover:scale-105 active:scale-95 transition-all duration-300 inline-flex items-center gap-3">
+                <i class="fa-solid fa-rocket"></i> 立即報名 (跳轉問卷星)
+            </button>
+            <p class="text-xs text-slate-500 mt-12">
+                © 2026 中秋轟趴House Party 籌備委員會 (台生會 x 澳聯會) 保留最終解釋權
+            </p>
+        </div>
+    </footer>
+
+    <!-- FLOATING CTA BUTTON (ALWAYS VISIBLE) -->
+    <div class="fixed bottom-6 right-6 z-40">
+        <button onclick="openRegistrationModal()" class="group flex items-center gap-3 px-6 py-4 rounded-full font-bold text-white shadow-2xl bg-gradient-to-r from-pool-500 via-sky-500 to-sunset-500 hover:scale-110 active:scale-95 transition-all duration-300 border-2 border-white/50 animate-pulse-slow">
+            <span class="text-xl">🥮</span>
+            <span class="hidden sm:inline">搶票報名中</span>
+            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+        </button>
+    </div>
+
+    <!-- REGISTRATION MODAL DIALOG -->
+    <div id="regModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
+        <div class="glass-card max-w-lg w-full rounded-3xl p-6 sm:p-8 shadow-2xl relative animate-scaleUp border border-white">
+            <!-- Close Button -->
+            <button onclick="closeRegistrationModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition-colors">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <!-- Modal Content -->
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 rounded-2xl bg-pool-100 text-pool-600 flex items-center justify-center text-3xl mx-auto mb-3">
+                    🎉
+                </div>
+                <h3 class="text-2xl font-extrabold text-slate-900">報名問卷星跳轉</h3>
+                <p class="text-sm text-slate-600 mt-1">點擊下方按鈕將前往問卷星安全報名頁面</p>
+            </div>
+
+            <!-- Event Summary Box -->
+            <div class="bg-sky-50/80 rounded-2xl p-4 mb-6 text-left border border-sky-100 space-y-2 text-sm text-slate-700">
+                <div class="flex justify-between">
+                    <span class="font-bold text-slate-900">📍 活動地點：</span>
+                    <span>上海市浦東區環嶼別墅 (迪士尼旁)</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="font-bold text-slate-900">⏰ 報到時間：</span>
+                    <span>9/26 13:00 起開放簽到選房</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="font-bold text-slate-900">🏷️ 報名優惠：</span>
+                    <span>早鳥+團報折後最低僅 125 元！</span>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="space-y-3">
+                <a href="https://v.wjx.cn/vm/h4ykju8.aspx" target="_blank" rel="noopener noreferrer" class="w-full py-4 rounded-xl font-bold text-lg text-white bg-gradient-to-r from-pool-500 to-sunset-500 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 transition-all hover:scale-[1.02]">
+                    <i class="fa-solid fa-external-link"></i> 前往問卷星填寫報名
+                </a>
+                <button onclick="copyFormLink()" class="w-full py-3 rounded-xl font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors text-sm">
+                    <i class="fa-regular fa-copy mr-1"></i> 複製報名連結
+                </button>
+            </div>
+
+            <p id="copyAlert" class="text-xs text-center text-emerald-600 font-bold mt-2 hidden">
+                ✓ 連結已成功複製至剪貼簿！
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // -------------------------------------------------------------
+        // Water Ripple Background Canvas Animation
+        // -------------------------------------------------------------
+        const canvas = document.getElementById('waterCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        let bubbles = [];
+        for (let i = 0; i < 25; i++) {
+            bubbles.push({
+                x: Math.random() * window.innerWidth,
+                y: Math.random() * window.innerHeight,
+                radius: Math.random() * 20 + 5,
+                speedY: Math.random() * 0.8 + 0.2,
+                opacity: Math.random() * 0.4 + 0.1
+            });
+        }
+
+        function animateWater() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            bubbles.forEach(b => {
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(0, 180, 216, ${b.opacity})`;
+                ctx.fill();
+
+                b.y -= b.speedY;
+                if (b.y + b.radius < 0) {
+                    b.y = canvas.height + b.radius;
+                    b.x = Math.random() * canvas.width;
+                }
+            });
+
+            requestAnimationFrame(animateWater);
+        }
+        animateWater();
+
+        // -------------------------------------------------------------
+        // Countdown Timer Logic
+        // Target Date: Mid-Autumn Early Bird Deadline (Sept 14th 23:59:59)
+        // -------------------------------------------------------------
+        const targetDate = new Date('2026-09-14T23:59:59').getTime();
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const difference = targetDate - now;
+
+            if (difference > 0) {
+                const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+                document.getElementById('days').innerText = String(days).padStart(2, '0');
+                document.getElementById('hours').innerText = String(hours).padStart(2, '0');
+                document.getElementById('minutes').innerText = String(minutes).padStart(2, '0');
+                document.getElementById('seconds').innerText = String(seconds).padStart(2, '0');
+            } else {
+                document.getElementById('days').innerText = "00";
+                document.getElementById('hours').innerText = "00";
+                document.getElementById('minutes').innerText = "00";
+                document.getElementById('seconds').innerText = "00";
+            }
+        }
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        // -------------------------------------------------------------
+        // Timeline Filter
+        // -------------------------------------------------------------
+        function filterTimeline(category) {
+            const items = document.querySelectorAll('.timeline-item');
+            const btns = document.querySelectorAll('.tab-btn');
+
+            btns.forEach(btn => {
+                btn.classList.remove('bg-pool-500', 'text-white', 'shadow-sm');
+                btn.classList.add('text-slate-600');
+            });
+
+            if (category === 'all') {
+                document.getElementById('btn-all').classList.add('bg-pool-500', 'text-white', 'shadow-sm');
+                items.forEach(item => item.style.display = 'block');
+            } else if (category === 'day') {
+                document.getElementById('btn-day').classList.add('bg-pool-500', 'text-white', 'shadow-sm');
+                items.forEach(item => {
+                    item.style.display = item.classList.contains('day') ? 'block' : 'none';
+                });
+            } else if (category === 'night') {
+                document.getElementById('btn-night').classList.add('bg-pool-500', 'text-white', 'shadow-sm');
+                items.forEach(item => {
+                    item.style.display = item.classList.contains('night') ? 'block' : 'none';
+                });
+            }
+        }
+
+        // -------------------------------------------------------------
+        // FAQ Accordion Toggle
+        // -------------------------------------------------------------
+        function toggleFaq(element) {
+            const answer = element.querySelector('.faq-answer');
+            const icon = element.querySelector('.fa-chevron-down');
+            if (answer.classList.contains('hidden')) {
+                answer.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                answer.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // -------------------------------------------------------------
+        // Modal & Navigation Logic
+        // -------------------------------------------------------------
+        function openRegistrationModal() {
+            document.getElementById('regModal').classList.remove('hidden');
+        }
+
+        function closeRegistrationModal() {
+            document.getElementById('regModal').classList.add('hidden');
+        }
+
+        function copyFormLink() {
+            const link = "https://v.wjx.cn/vm/h4ykju8.aspx";
+            const dummy = document.createElement('textarea');
+            document.body.appendChild(dummy);
+            dummy.value = link;
+            dummy.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummy);
+
+            const alertBox = document.getElementById('copyAlert');
+            alertBox.classList.remove('hidden');
+            setTimeout(() => {
+                alertBox.classList.add('hidden');
+            }, 2500);
+        }
+
+        // Mobile Menu Toggle
+        document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>
