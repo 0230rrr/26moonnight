@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>中秋渡假別墅轟趴｜House Party 2026</title>
+  <!-- Google Fonts & Tailwind CSS CDN -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background-color: #f6fbfb;
+      color: #153442;
+      overflow-x: hidden;
+    }
+    
+    .font-serif-custom {
+      font-family: 'Noto Serif TC', serif;
+    }
+
+    /* 文字漸層色 */
+    .text-gradient {
+      background: linear-gradient(102deg, #0b7eaa 0%, #07b9c3 52%, #f0853f 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* 按鈕樣式 */
+    .btn-primary {
+      background: linear-gradient(112deg, #079cb4, #13bbcf 55%, #f49a4d);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 12px 25px rgba(11, 158, 182, 0.25);
+      transition: all 0.2s ease;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 30px rgba(11, 158, 182, 0.35);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.8);
+      color: #24515c;
+      border: 1px solid #cfe7e1;
+      box-shadow: 0 8px 18px rgba(30, 91, 102, 0.08);
+      transition: all 0.2s ease;
+    }
+    .btn-secondary:hover {
+      background: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: 0 12px 22px rgba(30, 91, 102, 0.15);
+    }
+
+    .btn-sunset {
+      background: linear-gradient(105deg, #ffd166, #f58d4a 58%, #12abc0);
+      color: #123440;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      box-shadow: 0 16px 34px rgba(3, 41, 51, 0.28);
+      transition: all 0.2s ease;
+    }
+    .btn-sunset:hover {
+      transform: translateY(-2px) scale(1.02);
+    }
+
+    /* 光暈背景 */
+    .hero-orb {
+      position: absolute;
+      border-radius: 9999px;
+      pointer-events: none;
+      filter: blur(40px);
+    }
+    .hero-orb-a {
+      background: radial-gradient(circle, rgba(172, 238, 234, 0.6) 0%, rgba(246, 251, 251, 0) 70%);
+      width: 500px;
+      height: 500px;
+      top: -150px;
+      left: -100px;
+    }
+    .hero-orb-b {
+      background: radial-gradient(circle, rgba(255, 202, 119, 0.35) 0%, rgba(246, 251, 251, 0) 70%);
+      width: 450px;
+      height: 450px;
+      top: 100px;
+      right: -100px;
+    }
+
+    /* 主視覺外框形狀 */
+    .hero-image-wrap {
+      border: 8px solid rgba(255, 255, 255, 0.85);
+      border-radius: 48% 48% 30% 30% / 38% 40% 25% 25%;
+      box-shadow: 0 25px 60px rgba(20, 95, 108, 0.22);
+      transform: rotate(2deg);
+      transition: transform 0.5s ease;
+    }
+    .hero-image-wrap:hover {
+      transform: rotate(0deg) scale(1.02);
+    }
+
+    /* 浮動動態卡片 */
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+    .floating-card-top {
+      animation: float 5s ease-in-out infinite;
+    }
+    .floating-card-bottom {
+      animation: float 6s ease-in-out 1.5s infinite;
+    }
+
+    /* 導覽連結下劃線效果 */
+    .nav-link {
+      position: relative;
+      color: #42626a;
+      font-weight: 700;
+      transition: color 0.2s;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: #fa8748;
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.25s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .nav-link:hover {
+      color: #0b9eb6;
+    }
+    .nav-link:hover::after {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+
+    /* 時間軸邊線 */
+    .timeline::before {
+      content: '';
+      position: absolute;
+      top: 24px;
+      bottom: 24px;
+      left: 21px;
+      width: 2px;
+      background: linear-gradient(to bottom, #86ded9, rgba(134, 222, 217, 0.15));
+    }
+    @media (min-width: 768px) {
+      .timeline::before {
+        left: 140px;
+      }
+    }
+  </style>
+</head>
+<body class="relative">
+
+  <!-- 頂部導覽列 Header -->
+  <header class="sticky top-0 z-40 bg-[#f6fbfb]/85 backdrop-blur-md border-b border-white/60">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
+      <!-- Logo -->
+      <a href="#top" class="flex items-center gap-3 group">
+        <div class="w-11 h-11 rounded-2xl bg-[#0b9eb6] text-white flex items-center justify-center text-xl shadow-lg transform group-hover:-rotate-6 transition-transform">
+          🥮
+        </div>
+        <div>
+          <span class="block text-base font-black tracking-wider text-[#153442]">中秋渡假轟趴</span>
+          <span class="block text-[10px] font-bold tracking-widest text-[#0b9eb6]">HOUSE PARTY · 2026</span>
+        </div>
+      </a>
+
+      <!-- 電腦版選單 -->
+      <nav class="hidden md:flex items-center gap-8">
+        <a href="#highlights" class="nav-link text-sm">派對亮點</a>
+        <a href="#schedule" class="nav-link text-sm">活動流程</a>
+        <a href="#venue" class="nav-link text-sm">豪宅開箱</a>
+        <a href="#faq" class="nav-link text-sm">常見問題</a>
+      </nav>
+
+      <!-- 報名按鈕 -->
+      <button onclick="openModal()" class="btn-primary hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/></svg>
+        立即搶票
+      </button>
+
+      <!-- 行動版選單開關按鈕 -->
+      <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-xl bg-white border border-[#dcefe9] text-[#153442]">
+        <svg id="menuIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+
+    <!-- 行動版選單 -->
+    <div id="mobileMenu" class="hidden md:hidden bg-[#f6fbfb] border-b border-[#dcefe9] px-6 py-4 shadow-xl">
+      <div class="flex flex-col gap-3">
+        <a href="#highlights" onclick="toggleMobileMenu()" class="py-2 text-sm font-bold text-[#26505b]">派對亮點</a>
+        <a href="#schedule" onclick="toggleMobileMenu()" class="py-2 text-sm font-bold text-[#26505b]">活動流程</a>
+        <a href="#venue" onclick="toggleMobileMenu()" class="py-2 text-sm font-bold text-[#26505b]">豪宅開箱</a>
+        <a href="#faq" onclick="toggleMobileMenu()" class="py-2 text-sm font-bold text-[#26505b]">常見問題</a>
+        <button onclick="openModal(); toggleMobileMenu();" class="btn-primary w-full py-3 rounded-full font-bold text-sm mt-2 flex justify-center items-center gap-2">
+          搶先報名
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero 主視覺首頁區塊 -->
+  <section class="relative pt-12 pb-20 md:pt-16 md:pb-28">
+    <div class="hero-orb hero-orb-a"></div>
+    <div class="hero-orb hero-orb-b"></div>
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 relative">
+      <div class="grid lg:grid-cols-12 gap-12 items-center">
+        
+        <!-- 左側文案 -->
+        <div class="lg:col-span-7 z-10">
+          <div class="inline-flex items-center gap-2 text-xs font-black tracking-widest text-[#0b9eb6] mb-4">
+            <span class="w-2 h-2 rounded-full bg-[#fa8748] animate-ping"></span>
+            校內外台生 × 澳生 · 跨校中秋年度盛會
+          </div>
+
+          <p class="font-serif-custom text-lg sm:text-xl italic text-[#0b9eb6] mb-2">
+            A stay-in villa party, from sunlit pool to moonlit stories.
+          </p>
+
+          <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black leading-tight tracking-tight text-[#153442]">
+            渡假別墅泳池<br>
+            <span class="text-gradient">中秋轟趴</span>
+          </h1>
+
+          <p class="mt-6 text-base sm:text-lg text-[#4c6970] max-w-xl font-medium leading-relaxed">
+            從午後水花、金色 BBQ 到深夜睡衣生存戰，入住 Villa，用一整天的狂歡把中秋過得不一樣。
+          </p>
+
+          <!-- 標籤 Pill -->
+          <div class="mt-6 flex flex-wrap gap-3">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/80 border border-[#a1d7cf] text-xs font-bold text-[#40666c] shadow-sm">
+              📍 上海環嶼別墅・包整棟
+            </span>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/80 border border-[#a1d7cf] text-xs font-bold text-[#40666c] shadow-sm">
+              📅 2026 秋日限定
+            </span>
+          </div>
+
+          <!-- 按鈕區 -->
+          <div class="mt-8 flex flex-col sm:flex-row gap-4">
+            <button onclick="openModal()" class="btn-primary px-8 py-4 rounded-full font-bold text-base flex items-center justify-center gap-2">
+              🎉 搶先報名搶位
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            </button>
+            <a href="#schedule" class="btn-secondary px-8 py-4 rounded-full font-bold text-base flex items-center justify-center gap-2">
+              ⏱️ 探索全天流程
+            </a>
+          </div>
+          <p class="mt-3 text-xs text-[#779298] font-bold">名額有限，額滿將提早關閉報名表單。</p>
+        </div>
+
+        <!-- 右側動態圖片區 -->
+        <div class="lg:col-span-5 relative">
+          <div class="hero-image-wrap relative mx-auto w-full max-w-[420px] aspect-[4/5] overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&w=800&q=80" alt="渡假別墅泳池" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-tr from-[#062e3b]/60 via-transparent to-orange-300/20"></div>
+            
+            <div class="absolute bottom-4 left-4 right-4 flex items-end justify-between">
+              <div class="bg-[#062e3b]/70 backdrop-blur-md p-3.5 rounded-2xl border border-white/20 text-white">
+                <span class="block text-[10px] font-bold tracking-widest text-[#9fe5e5]">PRIVATE POOL VILLA</span>
+                <span class="text-xs sm:text-sm font-black">一起住進中秋夜裡</span>
+              </div>
+              <div class="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-xl text-white border border-white/30">
+                🌙
+              </div>
+            </div>
+          </div>
+
+          <!-- 浮動卡片 1 -->
+          <div class="floating-card-top absolute top-2 -right-2 sm:-right-6 bg-white/90 backdrop-blur-md p-3 rounded-2xl border border-white shadow-xl flex items-center gap-3">
+            <span class="text-2xl">🍹</span>
+            <div>
+              <b class="text-xs font-black text-[#143b46] block">BBQ · 特調 · 遊戲</b>
+              <small class="text-[10px] text-[#6a878d] block">從午後玩到深夜</small>
+            </div>
+          </div>
+
+          <!-- 浮動卡片 2 -->
+          <div class="floating-card-bottom absolute bottom-6 -left-2 sm:-left-6 bg-white/90 backdrop-blur-md p-3 rounded-2xl border border-white shadow-xl flex items-center gap-3">
+            <span class="text-xl text-[#0b9eb6] p-2 bg-[#e5fbf7] rounded-full">🏊</span>
+            <div>
+              <b class="text-xs font-black text-[#143b46] block">一整棟的自由</b>
+              <small class="text-[10px] text-[#6a878d] block">泳池、花園、影音廳</small>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 倒數計時面板 -->
+      <div class="mt-16 bg-white/80 backdrop-blur-md border border-white rounded-3xl p-6 sm:p-8 shadow-xl grid md:grid-cols-12 gap-6 items-center">
+        <div class="md:col-span-4 flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-[#153442] text-[#f9cf67] flex items-center justify-center text-lg font-bold">🔥</div>
+          <div>
+            <p class="text-[10px] font-black tracking-widest text-[#779298]">EARLY BIRD WINDOW</p>
+            <h3 class="text-base font-black text-[#153442]">早鳥優惠倒數中</h3>
+          </div>
+        </div>
+
+        <div class="md:col-span-5 grid grid-cols-4 gap-2 text-center">
+          <div class="bg-[#f6fbfb] py-2 rounded-xl border border-[#dcefe9]">
+            <strong id="days" class="text-2xl sm:text-3xl font-black text-[#0b9eb6] block leading-none">08</strong>
+            <span class="text-[10px] font-bold text-[#779298]">天</span>
+          </div>
+          <div class="bg-[#f6fbfb] py-2 rounded-xl border border-[#dcefe9]">
+            <strong id="hours" class="text-2xl sm:text-3xl font-black text-[#0b9eb6] block leading-none">14</strong>
+            <span class="text-[10px] font-bold text-[#779298]">時</span>
+          </div>
+          <div class="bg-[#f6fbfb] py-2 rounded-xl border border-[#dcefe9]">
+            <strong id="minutes" class="text-2xl sm:text-3xl font-black text-[#0b9eb6] block leading-none">25</strong>
+            <span class="text-[10px] font-bold text-[#779298]">分</span>
+          </div>
+          <div class="bg-[#f6fbfb] py-2 rounded-xl border border-[#dcefe9]">
+            <strong id="seconds" class="text-2xl sm:text-3xl font-black text-[#fa8748] block leading-none">40</strong>
+            <span class="text-[10px] font-bold text-[#779298]">秒</span>
+          </div>
+        </div>
+
+        <div class="md:col-span-3 text-center md:text-right">
+          <p class="text-xs font-bold text-[#779298]">9/13 23:59 截止<br>額滿即提早關閉</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 派對亮點 Section -->
+  <section id="highlights" class="py-20 bg-gradient-to-b from-[#edf8f6] to-[#f6fbfb] relative">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+        <div>
+          <span class="text-xs font-black tracking-widest text-[#0b9eb6] uppercase">THE REASONS TO STAY UP LATE</span>
+          <h2 class="text-3xl sm:text-5xl font-black text-[#153442] mt-2">六種心動，<br><span class="text-[#0b9eb6]">一場中秋。</span></h2>
+        </div>
+        <p class="text-sm font-semibold text-[#638087] max-w-xs leading-relaxed">
+          不只是聚餐，而是把泳池、食物、儀式與新朋友都裝進同一個週末記憶。
+        </p>
+      </div>
+
+      <!-- 卡片網格 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        
+        <!-- 卡片 1 -->
+        <div class="bg-white/80 border border-[#daefe9] rounded-3xl p-6 relative overflow-hidden shadow-lg hover:-translate-y-1.5 transition-all">
+          <span class="absolute top-5 right-5 text-xs font-black text-[#cae5e0]">01</span>
+          <div class="w-12 h-12 rounded-2xl bg-[#e4f8f5] flex items-center justify-center text-2xl mb-5">🏊</div>
+          <h3 class="text-base font-black text-[#173842] mb-2">清涼泳池・水槍大戰</h3>
+          <p class="text-xs text-[#6d878c] font-medium leading-relaxed">專屬私人泳池，搭配造型泳圈、水槍與沙灘遊戲；在初秋留下最清爽的合照。</p>
+          <div class="absolute bottom-0 left-6 w-12 h-1 bg-[#0b9eb6] rounded-t-full"></div>
+        </div>
+
+        <!-- 卡片 2 -->
+        <div class="bg-white/80 border border-[#daefe9] rounded-3xl p-6 relative overflow-hidden shadow-lg hover:-translate-y-1.5 transition-all">
+          <span class="absolute top-5 right-5 text-xs font-black text-[#cae5e0]">02</span>
+          <div class="w-12 h-12 rounded-2xl bg-[#fff1db] flex items-center justify-center text-2xl mb-5">🥩</div>
+          <h3 class="text-base font-black text-[#173842] mb-2">夕陽 BBQ・招牌滷肉飯</h3>
+          <p class="text-xs text-[#6d878c] font-medium leading-relaxed">中午先用香濃滷肉飯補充能量，傍晚再於金色夕陽下享用烤肉與冰涼飲品。</p>
+          <div class="absolute bottom-0 left-6 w-12 h-1 bg-[#f7974d] rounded-t-full"></div>
+        </div>
+
+        <!-- 卡片 3 -->
+        <div class="bg-white/80 border border-[#daefe9] rounded-3xl p-6 relative overflow-hidden shadow-lg hover:-translate-y-1.5 transition-all">
+          <span class="absolute top-5 right-5 text-xs font-black text-[#cae5e0]">03</span>
+          <div class="w-12 h-12 rounded-2xl bg-[#f0ebff] flex items-center justify-center text-2xl mb-5">🍸</div>
+          <h3 class="text-base font-black text-[#173842] mb-2">特調競賽・酒桌 Game</h3>
+          <p class="text-xs text-[#6d878c] font-medium leading-relaxed">帶著創意加入特調盲測，也可以透過輕鬆的遊戲，快速認識來自不同學校的朋友。</p>
+          <div class="absolute bottom-0 left-6 w-12 h-1 bg-[#9d7cdc] rounded-t-full"></div>
+        </div>
+
+        <!-- 卡片 4 -->
+        <div class="bg-white/80 border border-[#daefe9] rounded-3xl p-6 relative overflow-hidden shadow-lg hover:-translate-y-1.5 transition-all">
+          <span class="absolute top-5 right-5 text-xs font-black text-[#cae5e0]">04</span>
+          <div class="w-12 h-12 rounded-2xl bg-[#fff0f4] flex items-center justify-center text-2xl mb-5">🎆</div>
+          <h3 class="text-base font-black text-[#173842] mb-2">仙女棒・夜空儀式</h3>
+          <p class="text-xs text-[#6d878c] font-medium leading-relaxed">用仙女棒、許願時刻與璀璨夜空，為這場中秋聚會留下值得回看的浪漫片段。</p>
+          <div class="absolute bottom-0 left-6 w-12 h-1 bg-[#ef7f9e] rounded-t-full"></div>
+        </div>
+
+        <!-- 卡片 5 -->
+        <div class="bg-white/80 border border-[#daefe9] rounded-3xl p-6 relative overflow-hidden shadow-lg hover:-translate-y-1.5 transition-all">
+          <span class="absolute top-5 right-5 text-xs font-black text-[#cae5e0]">05</span>
+          <div class="w-12 h-12 rounded-2xl bg-[#e8f1ff] flex items-center justify-center text-2xl mb-5">🛌</div>
+          <h3 class="text-base font-black text-[#173842] mb-2">深夜睡衣生存戰</h3>
+          <p class="text-xs text-[#6d878c] font-medium leading-relaxed">換上最舒服的睡衣，加入枕頭大戰、分組任務與深夜限定的歡笑時間。</p>
+          <div class="absolute bottom-0 left-6 w-12 h-1 bg-[#5796e3] rounded-t-full"></div>
+        </div>
+
+        <!-- 卡片 6 -->
+        <div class="bg-white/80 border border-[#daefe9] rounded-3xl p-6 relative overflow-hidden shadow-lg hover:-translate-y-1.5 transition-all">
+          <span class="absolute top-5 right-5 text-xs font-black text-[#cae5e0]">06</span>
+          <div class="w-12 h-12 rounded-2xl bg-[#f1fadf] flex items-center justify-center text-2xl mb-5">🤝</div>
+          <h3 class="text-base font-black text-[#173842] mb-2">跨校交流・新生破冰</h3>
+          <p class="text-xs text-[#6d878c] font-medium leading-relaxed">為校內外台生與澳生設計的相遇場景，讓新生、老生與幹部自然聊起來。</p>
+          <div class="absolute bottom-0 left-6 w-12 h-1 bg-[#91bd47] rounded-t-full"></div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 活動流程 Schedule Section -->
+  <section id="schedule" class="py-20 bg-[#153442] text-white relative overflow-hidden">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
+      
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+        <div>
+          <span class="text-xs font-black tracking-widest text-[#86ded9] uppercase">FROM NOON TO MOONLIGHT</span>
+          <h2 class="text-3xl sm:text-5xl font-black text-white mt-2">一日一夜，<br><span class="text-[#85dfd9]">不缺席的精彩。</span></h2>
+        </div>
+        <p class="text-sm font-semibold text-[#a9c4c6] max-w-xs leading-relaxed">
+          從進場破冰到深夜睡衣趴，將一天切成八段剛剛好的期待。
+        </p>
+      </div>
+
+      <!-- 頁籤 Filter Tabs -->
+      <div class="flex gap-2 mb-10 bg-white/10 p-1.5 rounded-2xl w-fit border border-white/10">
+        <button onclick="filterTimeline('all')" id="tab-all" class="px-4 py-2 rounded-xl text-xs font-bold bg-white text-[#153442] shadow transition-all">全部流程</button>
+        <button onclick="filterTimeline('day')" id="tab-day" class="px-4 py-2 rounded-xl text-xs font-bold text-[#b8d1d1] hover:text-white transition-all">☀️ 日間狂歡</button>
+        <button onclick="filterTimeline('night')" id="tab-night" class="px-4 py-2 rounded-xl text-xs font-bold text-[#b8d1d1] hover:text-white transition-all">🌙 夜晚微醺</button>
+      </div>
+
+      <!-- Timeline 列表 -->
+      <div class="timeline relative space-y-6">
+        
+        <!-- 項目 1 -->
+        <div class="timeline-item day-item grid grid-cols-1 md:grid-cols-12 items-start gap-4">
+          <div class="hidden md:block md:col-span-3 text-right pt-3">
+            <span class="text-xs font-black tracking-wider text-[#8bcac6]">12:00 — 12:50</span>
+          </div>
+          <div class="hidden md:flex md:col-span-1 justify-center pt-3 relative">
+            <div class="w-3 h-3 rounded-full bg-[#86ded9] border-2 border-[#153442] shadow-[0_0_0_2px_#86ded9]"></div>
+          </div>
+          <div class="md:col-span-8 bg-white/10 border border-white/15 rounded-2xl p-5 hover:bg-white/15 transition-all">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#ffe1ae]/20 text-[#ffe1ae]">工作人員限定</span>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#86ded9]/20 text-[#86ded9]">DAY LIGHT</span>
+              <span class="md:hidden text-xs font-bold text-[#8bcac6] ml-auto">12:00 — 12:50</span>
+            </div>
+            <h3 class="text-base font-black text-white">🏡 工作人員／志願者提早進場佈置</h3>
+            <p class="text-xs text-[#b8d1d1] mt-1 leading-relaxed">場地氣球裝飾、物資整理、房間確認，為精彩活動做好萬全準備。</p>
+          </div>
+        </div>
+
+        <!-- 項目 2 -->
+        <div class="timeline-item day-item grid grid-cols-1 md:grid-cols-12 items-start gap-4">
+          <div class="hidden md:block md:col-span-3 text-right pt-3">
+            <span class="text-xs font-black tracking-wider text-[#8bcac6]">13:00 — 15:00</span>
+          </div>
+          <div class="hidden md:flex md:col-span-1 justify-center pt-3 relative">
+            <div class="w-3 h-3 rounded-full bg-[#86ded9] border-2 border-[#153442] shadow-[0_0_0_2px_#86ded9]"></div>
+          </div>
+          <div class="md:col-span-8 bg-white/10 border border-white/15 rounded-2xl p-5 hover:bg-white/15 transition-all">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#86ded9]/20 text-[#86ded9]">DAY LIGHT</span>
+              <span class="md:hidden text-xs font-bold text-[#8bcac6] ml-auto">13:00 — 15:00</span>
+            </div>
+            <h3 class="text-base font-black text-white">🗝️ 簽到選房・庭院破冰大地遊戲</h3>
+            <p class="text-xs text-[#b8d1d1] mt-1 leading-relaxed">抵達後完成簽到、領取房卡；隨即在寬闊庭院展開破冰任務，快速認識新夥伴。</p>
+          </div>
+        </div>
+
+        <!-- 項目 3 -->
+        <div class="timeline-item day-item grid grid-cols-1 md:grid-cols-12 items-start gap-4">
+          <div class="hidden md:block md:col-span-3 text-right pt-3">
+            <span class="text-xs font-black tracking-wider text-[#8bcac6]">15:00 — 16:00</span>
+          </div>
+          <div class="hidden md:flex md:col-span-1 justify-center pt-3 relative">
+            <div class="w-3 h-3 rounded-full bg-[#86ded9] border-2 border-[#153442] shadow-[0_0_0_2px_#86ded9]"></div>
+          </div>
+          <div class="md:col-span-8 bg-white/10 border border-white/15 rounded-2xl p-5 hover:bg-white/15 transition-all">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#86ded9]/20 text-[#86ded9]">DAY LIGHT</span>
+              <span class="md:hidden text-xs font-bold text-[#8bcac6] ml-auto">15:00 — 16:00</span>
+            </div>
+            <h3 class="text-base font-black text-white">🌊 戶外泳池 Party</h3>
+            <p class="text-xs text-[#b8d1d1] mt-1 leading-relaxed">水槍大戰、沙灘排球與泳圈拍照打卡，讓夏末的熱度一路延續到中秋。</p>
+          </div>
+        </div>
+
+        <!-- 項目 4 -->
+        <div class="timeline-item night-item grid grid-cols-1 md:grid-cols-12 items-start gap-4">
+          <div class="hidden md:block md:col-span-3 text-right pt-3">
+            <span class="text-xs font-black tracking-wider text-[#8bcac6]">16:30 — 18:00</span>
+          </div>
+          <div class="hidden md:flex md:col-span-1 justify-center pt-3 relative">
+            <div class="w-3 h-3 rounded-full bg-[#fa8748] border-2 border-[#153442] shadow-[0_0_0_2px_#fa8748]"></div>
+          </div>
+          <div class="md:col-span-8 bg-white/10 border border-white/15 rounded-2xl p-5 hover:bg-white/15 transition-all">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#fa8748]/20 text-[#fa8748]">MOON LIGHT</span>
+              <span class="md:hidden text-xs font-bold text-[#8bcac6] ml-auto">16:30 — 18:00</span>
+            </div>
+            <h3 class="text-base font-black text-white">🥩 夕陽烤肉・中秋團圓晚會</h3>
+            <p class="text-xs text-[#b8d1d1] mt-1 leading-relaxed">享用美味烤肉，進行交換月餅儀式與香檳塔開幕式，在夕陽餘暉裡歡慶佳節。</p>
+          </div>
+        </div>
+
+        <!-- 項目 5 -->
+        <div class="timeline-item night-item grid grid-cols-1 md:grid-cols-12 items-start gap-4">
+          <div class="hidden md:block md:col-span-3 text-right pt-3">
+            <span class="text-xs font-black tracking-wider text-[#8bcac6]">18:00 — 19:00</span>
+          </div>
+          <div class="hidden md:flex md:col-span-1 justify-center pt-3 relative">
+            <div class="w-3 h-3 rounded-full bg-[#fa8748] border-2 border-[#153442] shadow-[0_0_0_2px_#fa8748]"></div>
+          </div>
+          <div class="md:col-span-8 bg-white/10 border border-white/15 rounded-2xl p-5 hover:bg-white/15 transition-all">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#fa8748]/20 text-[#fa8748]">MOON LIGHT</span>
+              <span class="md:hidden text-xs font-bold text-[#8bcac6] ml-auto">18:00 — 19:00</span>
+            </div>
+            <h3 class="text-base font-black text-white">💃 美式畢業舞會（Dresscode）</h3>
+            <p class="text-xs text-[#b8d1d1] mt-1 leading-relaxed">穿上高中制服或畢業舞會正裝，現場教學第一支舞，在內外雙圈裡交換舞伴。</p>
+          </div>
+        </div>
+
+        <!-- 項目 6 -->
+        <div class="timeline-item night-item grid grid-cols-1 md:grid-cols-12 items-start gap-4">
+          <div class="hidden md:block md:col-span-3 text-right pt-3">
+            <span class="text-xs font-black tracking-wider text-[#8bcac6]">19:00 — 21:00</span>
+          </div>
+          <div class="hidden md:flex md:col-span-1 justify-center pt-3 relative">
+            <div class="w-3 h-3 rounded-full bg-[#fa8748] border-2 border-[#153442] shadow-[0_0_0_2px_#fa8748]"></div>
+          </div>
+          <div class="md:col-span-8 bg-white/10 border border-white/15 rounded-2xl p-5 hover:bg-white/15 transition-all">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#fa8748]/20 text-[#fa8748]">MOON LIGHT</span>
+              <span class="md:hidden text-xs font-bold text-[#8bcac6] ml-auto">19:00 — 21:00</span>
+            </div>
+            <h3 class="text-base font-black text-white">✨ 仙女棒・天燈許願・煙火秀</h3>
+            <p class="text-xs text-[#b8d1d1] mt-1 leading-relaxed">戶外許願時刻、仙女棒畫出的夢幻軌跡，搭配令人屏息的夜間視覺表演。</p>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 豪宅開箱 Venue Section -->
+  <section id="venue" class="py-20 bg-[#f6fbfb]">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="grid lg:grid-cols-12 gap-12 items-center">
+        
+        <!-- 圖片畫廊 -->
+        <div class="lg:col-span-6 relative min-h-[380px]">
+          <div class="w-4/5 h-[340px] rounded-[30px] border-8 border-white overflow-hidden shadow-2xl relative z-10 transform -rotate-2">
+            <img src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=800&q=80" alt="別墅景觀" class="w-full h-full object-cover">
+          </div>
+          <div class="w-3/5 h-[220px] rounded-3xl border-4 border-white overflow-hidden shadow-xl absolute bottom-0 right-0 z-20 transform rotate-3">
+            <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80" alt="別墅庭院" class="w-full h-full object-cover">
+          </div>
+          <div class="absolute -top-4 right-8 bg-[#f49a4d] text-white p-4 rounded-full w-24 h-24 flex flex-col items-center justify-center rotate-12 shadow-lg z-30 border border-white/40">
+            <span class="text-[9px] font-black tracking-widest">VILLA</span>
+            <strong class="text-xs font-extrabold leading-tight text-center mt-0.5">stay<br>together</strong>
+          </div>
+        </div>
+
+        <!-- 文案與特色 -->
+        <div class="lg:col-span-6">
+          <span class="text-xs font-black tracking-widest text-[#0b9eb6] uppercase">LUXURY RESORT VILLA</span>
+          <h2 class="text-3xl sm:text-5xl font-black text-[#153442] mt-2">不只是場地，<br><span class="text-[#0b9eb6]">是一晚的度假。</span></h2>
+          <p class="mt-4 text-sm text-[#5c7a80] leading-relaxed font-medium">
+            嚴選高質感獨棟別墅，把入住、遊戲與派對留在同一個自在空間。白天有水光，傍晚有花園，深夜還有最舒服的房間與地舖區。
+          </p>
+
+          <ul class="mt-6 space-y-4">
+            <li class="flex items-start gap-3">
+              <span class="w-8 h-8 rounded-xl bg-[#e3f6f2] text-[#0b9eb6] flex items-center justify-center shrink-0 font-bold">🏊</span>
+              <div>
+                <b class="text-sm font-black text-[#244852] block">大型私人湛藍泳池</b>
+                <small class="text-xs text-[#80989c]">造型泳圈、水槍設施與派對音響</small>
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="w-8 h-8 rounded-xl bg-[#e3f6f2] text-[#0b9eb6] flex items-center justify-center shrink-0 font-bold">🥩</span>
+              <div>
+                <b class="text-sm font-black text-[#244852] block">戶外專業 BBQ 烤肉區</b>
+                <small class="text-xs text-[#80989c]">炭火準備、高級石桌與夕陽美景</small>
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="w-8 h-8 rounded-xl bg-[#e3f6f2] text-[#0b9eb6] flex items-center justify-center shrink-0 font-bold">🛡️</span>
+              <div>
+                <b class="text-sm font-black text-[#244852] block">獨立多房間與地舖區</b>
+                <small class="text-xs text-[#80989c]">男女分房更安心，備有足夠枕頭與被褥</small>
+              </div>
+            </li>
+          </ul>
+
+          <button onclick="openModal()" class="btn-secondary px-6 py-3 rounded-xl font-bold text-xs mt-8 inline-flex items-center gap-2">
+            查看名額與票價 ➔
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 常見問題 FAQ Section -->
+  <section id="faq" class="py-20 bg-[#f0f8f6]">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6">
+      <div class="text-center mb-12">
+        <span class="text-xs font-black tracking-widest text-[#0b9eb6] uppercase">GOOD TO KNOW BEFORE YOU GO</span>
+        <h2 class="text-3xl sm:text-5xl font-black text-[#153442] mt-2">先把問題，<br><span class="text-[#0b9eb6]">放心交給我們。</span></h2>
+      </div>
+
+      <div class="space-y-3">
+        
+        <!-- FAQ 1 -->
+        <div class="bg-white/80 border border-[#cfe7e1] rounded-2xl overflow-hidden transition-all">
+          <button onclick="toggleFaq(this)" class="w-full p-5 text-left font-black text-sm text-[#284f58] flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <span class="text-xs text-[#0b9eb6] font-bold">Q1</span>
+              <span>我一個人報名會不會尷尬？</span>
+            </div>
+            <span class="chevron text-[#0b9eb6] transform transition-transform">▼</span>
+          </button>
+          <div class="faq-answer hidden px-5 pb-5 pt-0 text-xs text-[#68848a] font-medium leading-relaxed border-t border-gray-100">
+            完全不會。活動規劃了庭院破冰大地遊戲與隊輔帶領；許多同學都是單人報名，當天很快就能認識來自不同學校的熱情夥伴。
+          </div>
+        </div>
+
+        <!-- FAQ 2 -->
+        <div class="bg-white/80 border border-[#cfe7e1] rounded-2xl overflow-hidden transition-all">
+          <button onclick="toggleFaq(this)" class="w-full p-5 text-left font-black text-sm text-[#284f58] flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <span class="text-xs text-[#0b9eb6] font-bold">Q2</span>
+              <span>需要準備什麼服裝或物料？</span>
+            </div>
+            <span class="chevron text-[#0b9eb6] transform transition-transform">▼</span>
+          </button>
+          <div class="faq-answer hidden px-5 pb-5 pt-0 text-xs text-[#68848a] font-medium leading-relaxed border-t border-gray-100">
+            建議攜帶泳衣／泳褲、替換乾爽衣物、睡衣、個人盥洗用品與常備藥品。現場將備有食材、酒水與主要遊戲道具。
+          </div>
+        </div>
+
+        <!-- FAQ 3 -->
+        <div class="bg-white/80 border border-[#cfe7e1] rounded-2xl overflow-hidden transition-all">
+          <button onclick="toggleFaq(this)" class="w-full p-5 text-left font-black text-sm text-[#284f58] flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <span class="text-xs text-[#0b9eb6] font-bold">Q3</span>
+              <span>交通方式如何安排？</span>
+            </div>
+            <span class="chevron text-[#0b9eb6] transform transition-transform">▼</span>
+          </button>
+          <div class="faq-answer hidden px-5 pb-5 pt-0 text-xs text-[#68848a] font-medium leading-relaxed border-t border-gray-100">
+            本次活動不提供專車接送，請參與者自行前往上海環嶼別墅。籌備團隊會在行前提供詳細地址與交通建議。
+          </div>
+        </div>
+
+        <!-- FAQ 4 -->
+        <div class="bg-white/80 border border-[#cfe7e1] rounded-2xl overflow-hidden transition-all">
+          <button onclick="toggleFaq(this)" class="w-full p-5 text-left font-black text-sm text-[#284f58] flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <span class="text-xs text-[#0b9eb6] font-bold">Q4</span>
+              <span>報名後如果臨時有事可以退費嗎？</span>
+            </div>
+            <span class="chevron text-[#0b9eb6] transform transition-transform">▼</span>
+          </button>
+          <div class="faq-answer hidden px-5 pb-5 pt-0 text-xs text-[#68848a] font-medium leading-relaxed border-t border-gray-100">
+            9 月 18 日 23:59 前可全額退費；9 月 19 日 00:00 後退費僅退 30%。名額可隨時轉讓，請聯繫總召協助處理。
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 頁尾 Final CTA Section -->
+  <section class="py-20 bg-gradient-to-br from-[#0b303b] via-[#0b6578] to-[#138e9c] text-white text-center relative overflow-hidden">
+    <div class="max-w-2xl mx-auto px-4 relative z-10">
+      <span class="inline-block p-3 bg-white/10 rounded-2xl text-3xl mb-4 transform -rotate-6">🥮</span>
+      <span class="block text-xs font-black tracking-widest text-[#ffe09a] uppercase mb-2">ONE NIGHT · A WHOLE LOT OF STORIES</span>
+      <h2 class="text-3xl sm:text-5xl font-black">這個中秋，<br><span class="text-[#ffe09a]">一起玩得不回家。</span></h2>
+      <p class="mt-4 text-sm text-[#c6dfe0] leading-relaxed font-medium">
+        名額有限，早鳥優惠即將截止。現在填寫問卷星，鎖定你的 Villa 席位。
+      </p>
+      <button onclick="openModal()" class="btn-sunset px-8 py-4 rounded-full font-extrabold text-base mt-8 inline-flex items-center gap-2">
+        🎟️ 立即報名，加入這場派對 ➔
+      </button>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-[#0b252e] py-6 text-center text-xs text-[#93b2b6] font-medium tracking-wide">
+    © 2026 中秋轟趴 House Party 籌備委員會 · 台生會 × 澳聯會 · 保留最終解釋權
+  </footer>
+
+  <!-- 右下角浮動按鈕 -->
+  <button onclick="openModal()" class="fixed bottom-6 right-6 z-30 bg-[#f5914b] text-white border border-white/60 px-4 py-3 rounded-full font-black text-xs shadow-2xl flex items-center gap-2 hover:scale-105 active:scale-95 transition-all">
+    <span>🥮</span>
+    <span class="hidden sm:inline">搶票報名中</span>
+    <span>➔</span>
+  </button>
+
+  <!-- Modal 報名彈窗 -->
+  <div id="registrationModal" class="fixed inset-0 z-50 bg-[#05232b]/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-[#f9fdfc] border border-white rounded-3xl p-6 sm:p-8 max-w-md w-full relative shadow-2xl transform transition-all">
+      <button onclick="closeModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-[#edf5f3] text-[#547279] flex items-center justify-center hover:bg-[#dbeae7] transition-colors">
+        ✕
+      </button>
+
+      <div class="w-14 h-14 rounded-2xl bg-[#e3f8f4] flex items-center justify-center text-3xl mx-auto mb-3">🎉</div>
+      <span class="text-[10px] font-black tracking-widest text-[#0b9eb6] uppercase text-center block">READY WHEN YOU ARE</span>
+      <h3 class="text-xl font-black text-[#153442] text-center mt-1">把席位先留給自己。</h3>
+      <p class="text-xs text-[#708c91] text-center mt-1 mb-6 font-medium">點擊下方按鈕將前往問卷星安全報名頁面。</p>
+
+      <div class="bg-[#eff9f6] border border-[#dcefe9] rounded-2xl p-4 mb-6 space-y-2 text-xs">
+        <div class="flex items-center justify-between text-[#31555e]">
+          <span class="font-bold">📍 活動地點</span>
+          <span class="font-semibold text-[#66848a]">上海環嶼別墅（包整棟）</span>
+        </div>
+        <div class="flex items-center justify-between text-[#31555e]">
+          <span class="font-bold">🚗 交通方式</span>
+          <span class="font-semibold text-[#66848a]">自行前往</span>
+        </div>
+        <div class="flex items-center justify-between text-[#31555e]">
+          <span class="font-bold">🎟️ 票價包含</span>
+          <span class="font-semibold text-[#66848a]">滷肉飯＋烤肉＋酒水＋煙火</span>
+        </div>
+      </div>
+
+      <a href="https://v.wjx.cn/vm/h4ykju8.aspx" target="_blank" rel="noreferrer" class="btn-primary w-full py-4 rounded-full font-bold text-sm flex items-center justify-center gap-2">
+        ↗️ 前往問卷星填寫報名
+      </a>
+
+      <button onclick="copyLink()" class="w-full mt-3 py-2 text-xs font-bold text-[#4b6c72] hover:text-[#0b9eb6] flex items-center justify-center gap-1 transition-colors">
+        📋 <span id="copyText">複製報名連結</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- JavaScript 邏輯控制 -->
+  <script>
+    // 報名 Modal 開關控制
+    function openModal() {
+      document.getElementById('registrationModal').classList.remove('hidden');
+    }
+    function closeModal() {
+      document.getElementById('registrationModal').classList.add('hidden');
+    }
+
+    // 行動版選單開關
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobileMenu');
+      menu.classList.toggle('hidden');
+    }
+
+    // Timeline 篩選功能 (All / Day / Night)
+    function filterTimeline(category) {
+      const dayItems = document.querySelectorAll('.day-item');
+      const nightItems = document.querySelectorAll('.night-item');
+      
+      const tabAll = document.getElementById('tab-all');
+      const tabDay = document.getElementById('tab-day');
+      const tabNight = document.getElementById('tab-night');
+
+      // 重置按鈕樣式
+      [tabAll, tabDay, tabNight].forEach(btn => {
+        btn.className = "px-4 py-2 rounded-xl text-xs font-bold text-[#b8d1d1] hover:text-white transition-all";
+      });
+
+      if (category === 'all') {
+        dayItems.forEach(el => el.style.display = 'grid');
+        nightItems.forEach(el => el.style.display = 'grid');
+        tabAll.className = "px-4 py-2 rounded-xl text-xs font-bold bg-white text-[#153442] shadow transition-all";
+      } else if (category === 'day') {
+        dayItems.forEach(el => el.style.display = 'grid');
+        nightItems.forEach(el => el.style.display = 'none');
+        tabDay.className = "px-4 py-2 rounded-xl text-xs font-bold bg-white text-[#153442] shadow transition-all";
+      } else if (category === 'night') {
+        dayItems.forEach(el => el.style.display = 'none');
+        nightItems.forEach(el => el.style.display = 'grid');
+        tabNight.className = "px-4 py-2 rounded-xl text-xs font-bold bg-white text-[#153442] shadow transition-all";
+      }
+    }
+
+    // FAQ 手風琴展開/收合
+    function toggleFaq(button) {
+      const answer = button.nextElementSibling;
+      const chevron = button.querySelector('.chevron');
+      
+      answer.classList.toggle('hidden');
+      if (answer.classList.contains('hidden')) {
+        chevron.style.transform = 'rotate(0deg)';
+      } else {
+        chevron.style.transform = 'rotate(180deg)';
+      }
+    }
+
+    // 複製連結功能
+    function copyLink() {
+      const link = "https://v.wjx.cn/vm/h4ykju8.aspx";
+      navigator.clipboard.writeText(link).then(() => {
+        const copyText = document.getElementById('copyText');
+        copyText.innerText = "連結已複製！";
+        setTimeout(() => {
+          copyText.innerText = "複製報名連結";
+        }, 2000);
+      });
+    }
+
+    // 簡單的倒數計時模擬 (設定為 8 天後)
+    const targetDate = new Date().getTime() + (8 * 24 * 60 * 60 * 1000);
+    setInterval(() => {
+      const now = new Date().getTime();
+      const distance = targetDate - now;
+
+      if (distance > 0) {
+        document.getElementById('days').innerText = String(Math.floor(distance / (1000 * 60 * 60 * 24))).padStart(2, '0');
+        document.getElementById('hours').innerText = String(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+        document.getElementById('minutes').innerText = String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+        document.getElementById('seconds').innerText = String(Math.floor((distance % (1000 * 60)) / 1000)).padStart(2, '0');
+      }
+    }, 1000);
+  </script>
+
+</body>
+</html>
