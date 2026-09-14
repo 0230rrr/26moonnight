@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindShift | 心理學抗拖延行動助手</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Noto Sans TC -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans TC', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f3ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+            min-height: 100vh;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        .step-transition {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        /* Custom Ring Progress */
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.35s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+    </style>
+</head>
+<body class="text-slate-800 flex flex-col justify-between p-4 md:p-6">
+
+    <header class="max-w-3xl mx-auto w-full flex justify-between items-center py-4">
+        <div class="flex items-center gap-2">
+            <div class="w-9 h-9 rounded-xl bg-brand-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-brand-500/20">
+                ⚡
+            </div>
+            <div>
+                <h1 class="font-bold text-slate-900 leading-none text-lg">MindShift</h1>
+                <span class="text-xs text-slate-500 font-medium">心理學抗拖延助手</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <div id="streakBadge" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 text-amber-700 border border-amber-200/60 rounded-full text-xs font-semibold">
+                <span>🔥 連續啟動:</span>
+                <span id="streakCount">0</span> 次
+            </div>
+            <button onclick="toggleHistoryModal()" class="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 hover:text-slate-900 rounded-xl text-xs font-medium shadow-sm hover:bg-slate-50 transition">
+                微勝利記錄
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-xl mx-auto w-full my-auto py-6">
+        
+        <!-- STEP INDICATOR -->
+        <div id="stepProgress" class="mb-6 flex justify-between items-center px-2">
+            <div class="flex items-center gap-2 text-xs font-semibold text-brand-600">
+                <span id="currentStepNum" class="w-6 h-6 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center">1</span>
+                <span id="currentStepTitle">情緒重構與極小步驟</span>
+            </div>
+            <div class="flex gap-1.5">
+                <div id="dot-1" class="w-2.5 h-2.5 rounded-full bg-brand-600"></div>
+                <div id="dot-2" class="w-2.5 h-2.5 rounded-full bg-slate-200"></div>
+                <div id="dot-3" class="w-2.5 h-2.5 rounded-full bg-slate-200"></div>
+                <div id="dot-4" class="w-2.5 h-2.5 rounded-full bg-slate-200"></div>
+            </div>
+        </div>
+
+        <!-- STEP 1: TASK & MICRO-STEP -->
+        <div id="step-1" class="glass-card rounded-3xl p-6 md:p-8 shadow-xl shadow-slate-200/50">
+            <div class="mb-6">
+                <span class="inline-block px-3 py-1 bg-indigo-50 text-brand-600 rounded-full text-xs font-semibold mb-2">
+                    🧠 心理機制：自我關懷 + 降低啟動能量
+                </span>
+                <h2 class="text-xl font-bold text-slate-900">你現在想逃避什麼任務？</h2>
+                <p class="text-sm text-slate-500 mt-1">
+                    拖延是正常的負面情緒逃避，別自責。讓我們把它縮小到大腦毫無威脅感。
+                </p>
+            </div>
+
+            <form onsubmit="handleStep1Submit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">不想面對的大任務</label>
+                    <input type="text" id="rawTaskInput" required placeholder="例如：寫期末報告、清理整間房間、做簡報..." 
+                        class="w-full px-4 py-3 rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 text-sm bg-white/80 transition">
+                </div>
+
+                <div class="p-4 bg-slate-50 rounded-2xl border border-slate-150">
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">💡 拆解為「2分鐘內可完成」的極小微步驟</label>
+                    <p class="text-xs text-slate-500 mb-2">門檻越低越好，低到你不可能失敗！</p>
+                    <input type="text" id="microStepInput" required placeholder="例如：打開 Word 並寫下標題、把地上的兩件衣服撿起來..." 
+                        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 text-sm bg-white transition">
+                </div>
+
+                <button type="submit" class="w-full py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-2xl shadow-lg shadow-brand-500/25 transition flex items-center justify-center gap-2 text-sm">
+                    下一步：制定 If-Then 觸發計畫 ➔
+                </button>
+            </form>
+        </div>
+
+        <!-- STEP 2: IMPLEMENTATION INTENTIONS & REWARD -->
+        <div id="step-2" class="glass-card rounded-3xl p-6 md:p-8 shadow-xl shadow-slate-200/50 hidden">
+            <div class="mb-6">
+                <span class="inline-block px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-xs font-semibold mb-2">
+                    🎯 心理機制：執行意圖 (If-Then) + 誘因捆綁
+                </span>
+                <h2 class="text-xl font-bold text-slate-900">建立大腦自動化條件反射</h2>
+                <p class="text-sm text-slate-500 mt-1">
+                    當條件明確時，前額葉皮質無需耗費意志力做決定。
+                </p>
+            </div>
+
+            <form onsubmit="handleStep2Submit(event)" class="space-y-4">
+                <!-- If Condition -->
+                <div class="p-4 bg-amber-50/60 rounded-2xl border border-amber-200/60">
+                    <span class="text-xs font-bold text-amber-800 uppercase tracking-wide">【若】IF (特定觸發情境/地點)</span>
+                    <input type="text" id="ifConditionInput" required placeholder="例如：當我倒好一杯水坐在書桌前、當指針走到 3 點..." 
+                        class="w-full mt-2 px-4 py-2.5 rounded-xl border border-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-500/50 text-sm bg-white transition">
+                </div>
+
+                <!-- Then Action (Auto populated) -->
+                <div class="p-4 bg-brand-50/60 rounded-2xl border border-brand-200/60">
+                    <span class="text-xs font-bold text-brand-800 uppercase tracking-wide">【就】THEN (執行微步驟)</span>
+                    <p id="previewMicroStep" class="text-sm font-semibold text-brand-900 mt-1">--</p>
+                </div>
+
+                <!-- Reward Pairing -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">🎁 5分鐘專注後的微獎勵（多巴胺誘因）</label>
+                    <input type="text" id="rewardInput" required placeholder="例如：喝一口香醇咖啡、看 2 分鐘迷因影片、伸個懶腰..." 
+                        class="w-full px-4 py-3 rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/50 text-sm bg-white/80 transition">
+                </div>
+
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="goToStep(1)" class="w-1/3 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold rounded-2xl text-sm transition">
+                        返回修改
+                    </button>
+                    <button type="submit" class="w-2/3 py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-2xl shadow-lg shadow-brand-500/25 transition flex items-center justify-center gap-2 text-sm">
+                        進入 5 分鐘專注衝刺 ⏱️
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- STEP 3: 5-MINUTE FOCUS SPRINT TIMER -->
+        <div id="step-3" class="glass-card rounded-3xl p-6 md:p-8 shadow-xl shadow-slate-200/50 text-center hidden">
+            <div class="mb-4">
+                <span class="inline-block px-3 py-1 bg-purple-50 text-purple-600 rounded-full text-xs font-semibold mb-2">
+                    ⌛ 心理機制：蔡格尼克效應 (只需開始5分鐘)
+                </span>
+                <h2 id="timerTaskTitle" class="text-lg font-bold text-slate-900 truncate">微步驟名稱</h2>
+                <p class="text-xs text-slate-500 mt-1">時間一到，你可以自由選擇立刻停止，或繼續做下去！</p>
+            </div>
+
+            <!-- Timer Circle -->
+            <div class="relative w-48 h-48 mx-auto my-6 flex items-center justify-center">
+                <svg class="w-full h-full" viewBox="0 0 100 100">
+                    <circle class="text-slate-100" stroke-width="6" stroke="currentColor" fill="transparent" r="42" cx="50" cy="50"/>
+                    <circle id="timerProgressRing" class="progress-ring__circle text-brand-600" stroke-width="6" stroke-linecap="round" stroke="currentColor" fill="transparent" r="42" cx="50" cy="50"/>
+                </svg>
+                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                    <span id="timerDisplay" class="text-4xl font-extrabold text-slate-800 tracking-tight">05:00</span>
+                    <span id="timerStatus" class="text-xs text-brand-600 font-medium mt-1">專注進行中</span>
+                </div>
+            </div>
+
+            <!-- Interactive encouragement -->
+            <p id="mindsetTip" class="text-xs italic text-slate-500 mb-6 bg-slate-50 py-2.5 px-4 rounded-xl border border-slate-150">
+                「只要開始了第一個動作，你已經戰勝了大腦 90% 的逃避本能。」
+            </p>
+
+            <!-- Control Buttons -->
+            <div class="flex justify-center gap-3">
+                <button id="pauseTimerBtn" onclick="togglePauseTimer()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-xl text-xs transition">
+                    暫停
+                </button>
+                <button onclick="finishEarly()" class="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-xl text-xs shadow-md shadow-emerald-500/20 transition">
+                    提前完成！🚀
+                </button>
+                <button onclick="abandonSprint()" class="px-4 py-2.5 text-slate-400 hover:text-slate-600 font-medium rounded-xl text-xs transition">
+                    放棄
+                </button>
+            </div>
+        </div>
+
+        <!-- STEP 4: CELEBRATION & REWARD -->
+        <div id="step-4" class="glass-card rounded-3xl p-6 md:p-8 shadow-xl shadow-slate-200/50 text-center hidden">
+            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-3xl flex items-center justify-center text-3xl mx-auto mb-4 shadow-inner">
+                🎉
+            </div>
+            
+            <h2 class="text-2xl font-bold text-slate-900">太棒了！微勝利達成！</h2>
+            <p class="text-sm text-slate-500 mt-1 max-w-sm mx-auto">
+                你成功突破了「啟動阻力」。大腦現在已經釋放多巴胺，開始建立積極迴路。
+            </p>
+
+            <div class="my-6 p-4 bg-emerald-50/70 rounded-2xl border border-emerald-200/60 text-left max-w-sm mx-auto">
+                <div class="text-xs text-emerald-800 font-semibold mb-1">🎁 你的即時應得獎勵：</div>
+                <div id="rewardDisplay" class="text-sm font-bold text-emerald-950">---</div>
+            </div>
+
+            <div class="space-y-3 max-w-sm mx-auto">
+                <button onclick="startFlowAgain()" class="w-full py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-2xl shadow-lg shadow-brand-500/25 transition text-sm">
+                    ✨ 順著勢頭，再挑戰下一個 5 分鐘！
+                </button>
+                <button onclick="resetApp()" class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium rounded-2xl transition text-sm">
+                    好好享受獎勵，稍後再繼續
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- HISTORY / MICRO-WINS MODAL -->
+    <div id="historyModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-100">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-slate-900 text-lg flex items-center gap-2">
+                    <span>🏆</span> 我的微勝利歷史紀錄
+                </h3>
+                <button onclick="toggleHistoryModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center font-bold text-sm">✕</button>
+            </div>
+            
+            <div id="historyList" class="max-h-60 overflow-y-auto space-y-2 pr-1 my-4">
+                <!-- Log Items populated by JS -->
+            </div>
+
+            <button onclick="clearHistory()" class="w-full py-2 bg-slate-50 hover:bg-red-50 text-slate-400 hover:text-red-500 font-medium rounded-xl text-xs transition">
+                清除所有歷史紀錄
+            </button>
+        </div>
+    </div>
+
+    <footer class="text-center text-xs text-slate-400 py-2">
+        MindShift • 基於認知行為療法 (CBT) 與行為心理學設計
+    </footer>
+
+    <!-- Canvas for Confetti -->
+    <canvas id="confettiCanvas" class="fixed inset-0 pointer-events-none z-50"></canvas>
+
+    <script>
+        // App State
+        let currentStep = 1;
+        let taskData = {
+            rawTask: '',
+            microStep: '',
+            ifCondition: '',
+            reward: ''
+        };
+        
+        let timer = null;
+        let totalSeconds = 300; // 5 minutes default
+        let secondsLeft = 300;
+        let isPaused = false;
+        let streak = parseInt(localStorage.getItem('mindshift_streak') || '0');
+        let historyLogs = JSON.parse(localStorage.getItem('mindshift_logs') || '[]');
+
+        // Ring circle circumference
+        const circle = document.getElementById('timerProgressRing');
+        const radius = circle.r.baseVal.value;
+        const circumference = 2 * Math.PI * radius;
+        circle.style.strokeDasharray = `${circumference} ${circumference}`;
+
+        function setProgress(percent) {
+            const offset = circumference - (percent / 100 * circumference);
+            circle.style.strokeDashoffset = offset;
+        }
+
+        // Initialize UI
+        document.addEventListener('DOMContentLoaded', () => {
+            updateStreakUI();
+        });
+
+        function updateStreakUI() {
+            document.getElementById('streakCount').innerText = streak;
+            if(streak > 0) {
+                document.getElementById('streakBadge').classList.remove('hidden');
+            }
+        }
+
+        function goToStep(step) {
+            currentStep = step;
+            // Hide all steps
+            for(let i=1; i<=4; i++) {
+                document.getElementById(`step-${i}`).classList.add('hidden');
+                const dot = document.getElementById(`dot-${i}`);
+                if(i <= step) {
+                    dot.classList.remove('bg-slate-200');
+                    dot.classList.add('bg-brand-600');
+                } else {
+                    dot.classList.remove('bg-brand-600');
+                    dot.classList.add('bg-slate-200');
+                }
+            }
+            // Show active step
+            document.getElementById(`step-${step}`).classList.remove('hidden');
+
+            // Update Header titles
+            const stepTitles = [
+                "情緒重構與極小步驟",
+                "If-Then 執行意圖",
+                "5 分鐘專注衝刺",
+                "微勝利獎勵結算"
+            ];
+            document.getElementById('currentStepNum').innerText = step;
+            document.getElementById('currentStepTitle').innerText = stepTitles[step - 1];
+        }
+
+        // Step 1 Submission
+        function handleStep1Submit(e) {
+            e.preventDefault();
+            taskData.rawTask = document.getElementById('rawTaskInput').value.trim();
+            taskData.microStep = document.getElementById('microStepInput').value.trim();
+
+            document.getElementById('previewMicroStep').innerText = taskData.microStep;
+            goToStep(2);
+        }
+
+        // Step 2 Submission
+        function handleStep2Submit(e) {
+            e.preventDefault();
+            taskData.ifCondition = document.getElementById('ifConditionInput').value.trim();
+            taskData.reward = document.getElementById('rewardInput').value.trim();
+
+            document.getElementById('timerTaskTitle').innerText = `小步驟：${taskData.microStep}`;
+            startTimer();
+            goToStep(3);
+        }
+
+        // Timer Logic
+        function startTimer() {
+            clearInterval(timer);
+            totalSeconds = 300; // 5 mins
+            secondsLeft = totalSeconds;
+            isPaused = false;
+            document.getElementById('pauseTimerBtn').innerText = '暫停';
+            document.getElementById('timerStatus').innerText = '專注進行中';
+            updateTimerDisplay();
+
+            timer = setInterval(() => {
+                if(!isPaused) {
+                    secondsLeft--;
+                    updateTimerDisplay();
+
+                    if(secondsLeft <= 0) {
+                        clearInterval(timer);
+                        completeSprint();
+                    }
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(secondsLeft / 60);
+            const secs = secondsLeft % 60;
+            document.getElementById('timerDisplay').innerText = 
+                `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            
+            const percent = ((totalSeconds - secondsLeft) / totalSeconds) * 100;
+            setProgress(percent);
+        }
+
+        function togglePauseTimer() {
+            isPaused = !isPaused;
+            const btn = document.getElementById('pauseTimerBtn');
+            const status = document.getElementById('timerStatus');
+            if(isPaused) {
+                btn.innerText = '繼續';
+                status.innerText = '已暫停';
+            } else {
+                btn.innerText = '暫停';
+                status.innerText = '專注進行中';
+            }
+        }
+
+        function finishEarly() {
+            clearInterval(timer);
+            completeSprint();
+        }
+
+        function abandonSprint() {
+            if(confirm("真的要放棄這次 5 分鐘衝刺嗎？沒關係，大腦累了隨時可以重新開始。")) {
+                clearInterval(timer);
+                resetApp();
+            }
+        }
+
+        function completeSprint() {
+            playCompletionSound();
+            fireConfetti();
+            
+            // Save streak & log
+            streak += 1;
+            localStorage.setItem('mindshift_streak', streak);
+            updateStreakUI();
+
+            const logItem = {
+                task: taskData.rawTask,
+                step: taskData.microStep,
+                reward: taskData.reward,
+                date: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            };
+            historyLogs.unshift(logItem);
+            localStorage.setItem('mindshift_logs', JSON.stringify(historyLogs));
+
+            document.getElementById('rewardDisplay').innerText = taskData.reward;
+            goToStep(4);
+        }
+
+        function startFlowAgain() {
+            // Keep the raw task, but prompt for next micro-step
+            document.getElementById('microStepInput').value = '';
+            document.getElementById('ifConditionInput').value = '';
+            goToStep(1);
+        }
+
+        function resetApp() {
+            clearInterval(timer);
+            document.getElementById('rawTaskInput').value = '';
+            document.getElementById('microStepInput').value = '';
+            document.getElementById('ifConditionInput').value = '';
+            document.getElementById('rewardInput').value = '';
+            goToStep(1);
+        }
+
+        // Simple Audio Synth using Web Audio API (No external mp3 needed)
+        function playCompletionSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const now = ctx.currentTime;
+                
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.15); // E5
+                osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.3); // G5
+                
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+                
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                
+                osc.start(now);
+                osc.stop(now + 0.6);
+            } catch(e) {
+                console.log('Audio API not supported or blocked');
+            }
+        }
+
+        // History Modal
+        function toggleHistoryModal() {
+            const modal = document.getElementById('historyModal');
+            modal.classList.toggle('hidden');
+            if(!modal.classList.contains('hidden')) {
+                renderHistory();
+            }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            if(historyLogs.length === 0) {
+                list.innerHTML = `<div class="text-center py-6 text-xs text-slate-400">目前還沒有記錄，完成第一次 5 分鐘衝刺吧！</div>`;
+                return;
+            }
+            list.innerHTML = historyLogs.map(item => `
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 text-xs">
+                    <div class="flex justify-between font-bold text-slate-800">
+                        <span>⚡ ${escapeHtml(item.step)}</span>
+                        <span class="text-slate-400 font-normal">${item.date}</span>
+                    </div>
+                    <div class="text-slate-500 mt-0.5">母任務: ${escapeHtml(item.task)}</div>
+                    <div class="text-emerald-600 mt-1 font-medium">🎁 獎勵: ${escapeHtml(item.reward)}</div>
+                </div>
+            `).join('');
+        }
+
+        function clearHistory() {
+            historyLogs = [];
+            streak = 0;
+            localStorage.removeItem('mindshift_logs');
+            localStorage.removeItem('mindshift_streak');
+            updateStreakUI();
+            renderHistory();
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        // Canvas Confetti Implementation
+        function fireConfetti() {
+            const canvas = document.getElementById('confettiCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const colors = ['#6366f1', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6'];
+
+            for (let i = 0; i < 80; i++) {
+                particles.push({
+                    x: canvas.width / 2,
+                    y: canvas.height / 2,
+                    vx: (Math.random() - 0.5) * 12,
+                    vy: (Math.random() - 0.5) * 12 - 4,
+                    size: Math.random() * 6 + 4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    alpha: 1,
+                    decay: Math.random() * 0.02 + 0.015
+                });
+            }
+
+            function animateConfetti() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                let alive = false;
+
+                particles.forEach(p => {
+                    if (p.alpha > 0) {
+                        alive = true;
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.vy += 0.15; // gravity
+                        p.alpha -= p.decay;
+
+                        ctx.globalAlpha = Math.max(0, p.alpha);
+                        ctx.fillStyle = p.color;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                });
+
+                if (alive) {
+                    requestAnimationFrame(animateConfetti);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            }
+            animateConfetti();
+        }
+    </script>
+</body>
+</html>
