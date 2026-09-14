@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>反拖延·微拆解助手 (FocusStep)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font: Inter & Noto Sans TC -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans TC', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            900: '#14532d',
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'slide-up': 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(16px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* Custom smooth focus ring */
+        input:focus, textarea:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.25);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col justify-between transition-colors duration-300 selection:bg-brand-500 selection:text-white">
+
+    <!-- Top Navigation Header -->
+    <header class="w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-40">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="app.resetToHome()">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-emerald-400 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg tracking-tight leading-none text-slate-900 dark:text-white">FocusStep</h1>
+                    <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">反拖延·微拆解助手</span>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-2">
+                <!-- History Modal Button -->
+                <button onclick="app.toggleHistoryModal(true)" class="p-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="成就紀錄">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </button>
+                <!-- Dark Mode Toggle -->
+                <button onclick="app.toggleDarkMode()" class="p-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="切換主題">
+                    <svg id="theme-icon-sun" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                    </svg>
+                    <svg id="theme-icon-moon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content App Body -->
+    <main class="max-w-2xl w-full mx-auto px-4 py-8 sm:py-12 flex-grow flex flex-col justify-center">
+
+        <!-- STEP 0: Select Task Category (Home) -->
+        <div id="view-step-select" class="space-y-6 animate-fade-in">
+            <div class="text-center space-y-2">
+                <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-brand-400 border border-brand-200 dark:border-brand-800/50">
+                    一屏只顯一事 · 消滅大腦麻痺
+                </span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                    你現在被哪種任務卡住了？
+                </h2>
+                <p class="text-slate-500 dark:text-slate-400 text-sm sm:text-base">
+                    不必想完全部細節，選擇類型，跟著 3 個極簡填空就能破解。
+                </p>
+            </div>
+
+            <!-- Task Optional Title Input -->
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
+                <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                    你的任務名稱（選填）
+                </label>
+                <input type="text" id="input-task-name" placeholder="例如：製作活動邀請函、寫報告、清理房間..." 
+                       class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white placeholder-slate-400 text-sm focus:border-brand-500 transition-all">
+            </div>
+
+            <!-- Category Cards Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <!-- A. Output -->
+                <button onclick="app.startWizard('A')" class="group relative p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-brand-500/80 shadow-sm hover:shadow-md transition-all text-left flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-lg group-hover:scale-110 transition-transform">
+                            A
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">產出型</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">寫文章、做簡報、發郵件、設計海報、寫程式</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/60 flex items-center text-xs font-medium text-brand-600 dark:text-brand-400">
+                        <span>進入拆解</span>
+                        <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </div>
+                </button>
+
+                <!-- B. Decision -->
+                <button onclick="app.startWizard('B')" class="group relative p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-brand-500/80 shadow-sm hover:shadow-md transition-all text-left flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold text-lg group-hover:scale-110 transition-transform">
+                            B
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">決策型</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">挑選方案、比價購買、規劃行程、選定廠商</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/60 flex items-center text-xs font-medium text-brand-600 dark:text-brand-400">
+                        <span>進入拆解</span>
+                        <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </div>
+                </button>
+
+                <!-- C. Execution -->
+                <button onclick="app.startWizard('C')" class="group relative p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-brand-500/80 shadow-sm hover:shadow-md transition-all text-left flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold text-lg group-hover:scale-110 transition-transform">
+                            C
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">執行型</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">整理檔案、清理房間、報帳發票、實體維修</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/60 flex items-center text-xs font-medium text-brand-600 dark:text-brand-400">
+                        <span>進入拆解</span>
+                        <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </div>
+                </button>
+            </div>
+
+            <!-- Quick Template Shortcuts -->
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 text-center">
+                <span class="text-xs text-slate-400 dark:text-slate-500">常見卡點快速導航：</span>
+                <div class="mt-2 flex flex-wrap justify-center gap-2">
+                    <button onclick="app.quickTemplate('製作活動邀請函', 'A')" class="px-3 py-1 text-xs rounded-full bg-slate-200/60 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-brand-500 hover:text-white dark:hover:bg-brand-600 transition-colors">
+                        ✉️ 活動邀請函
+                    </button>
+                    <button onclick="app.quickTemplate('撰寫請假/延期通知信', 'A')" class="px-3 py-1 text-xs rounded-full bg-slate-200/60 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-brand-500 hover:text-white dark:hover:bg-brand-600 transition-colors">
+                        📧 延期/請假信
+                    </button>
+                    <button onclick="app.quickTemplate('整理雜亂的書桌與發票', 'C')" class="px-3 py-1 text-xs rounded-full bg-slate-200/60 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-brand-500 hover:text-white dark:hover:bg-brand-600 transition-colors">
+                        🧹 打掃與整理
+                    </button>
+                    <button onclick="app.quickTemplate('挑選適合的方案或工具', 'B')" class="px-3 py-1 text-xs rounded-full bg-slate-200/60 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-brand-500 hover:text-white dark:hover:bg-brand-600 transition-colors">
+                        🔍 挑選比較方案
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- WIZARD QUESTION CONTAINER (Single Step Display) -->
+        <div id="view-wizard-question" class="hidden space-y-6 animate-slide-up">
+            <!-- Progress indicator -->
+            <div class="flex items-center justify-between">
+                <button onclick="app.prevQuestion()" class="inline-flex items-center text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition-colors">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                    上一步
+                </button>
+                <div class="flex items-center space-x-2">
+                    <span id="wizard-category-badge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                        產出型
+                    </span>
+                    <span id="wizard-progress-text" class="text-xs font-semibold text-brand-600 dark:text-brand-400">
+                        步驟 1 / 3
+                    </span>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+                <div id="wizard-progress-bar" class="h-full bg-brand-500 transition-all duration-300 w-1/3"></div>
+            </div>
+
+            <!-- Active Question Card -->
+            <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
+                <div class="space-y-1">
+                    <h3 id="wizard-question-title" class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+                        這個產出最終要達到的「核心目的」是什麼？
+                    </h3>
+                    <p id="wizard-question-desc" class="text-sm text-slate-500 dark:text-slate-400">
+                        用簡單一句話或關鍵字即可，不需要完美句型。
+                    </p>
+                </div>
+
+                <!-- Input Field -->
+                <div class="space-y-3">
+                    <textarea id="wizard-input-field" rows="3" placeholder="請在此填寫..."
+                              class="w-full p-4 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-base placeholder-slate-400 focus:border-brand-500 transition-all resize-none"></textarea>
+                    
+                    <!-- Dynamic Examples/Hints Pills -->
+                    <div id="wizard-hints-container" class="flex flex-wrap items-center gap-2 pt-1">
+                        <span class="text-xs text-slate-400">可參考範例：</span>
+                        <!-- Dynamically inserted buttons -->
+                    </div>
+                </div>
+
+                <!-- Action button -->
+                <div class="pt-2 flex justify-end">
+                    <button onclick="app.nextQuestion()" class="w-full sm:w-auto px-8 py-3 rounded-xl bg-brand-600 hover:bg-brand-700 active:bg-brand-800 text-white font-semibold text-sm shadow-md shadow-brand-500/20 transition-all flex items-center justify-center space-x-2">
+                        <span>下一個格子</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7-7 7M3 12h18"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- FINAL STAGE: Truncated Micro-Action & Focus Timer -->
+        <div id="view-action-focus" class="hidden space-y-6 animate-slide-up">
+            
+            <!-- Success / Truncation Banner -->
+            <div class="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-4 flex items-center space-x-3 text-emerald-800 dark:text-emerald-300">
+                <div class="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0">
+                    <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <div>
+                    <h4 class="font-bold text-sm">任務解構完成！已自動為你截斷長鏈條</h4>
+                    <p class="text-xs opacity-90">忽略複雜的後續步驟，現在你只需要執行當前唯一的微動作。</p>
+                </div>
+            </div>
+
+            <!-- Current Single Micro-Action Focus Card -->
+            <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border-2 border-brand-500/80 shadow-lg shadow-brand-500/10 relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-brand-500 text-white text-[10px] font-bold tracking-wider uppercase px-3 py-1 rounded-bl-xl">
+                    當前唯一微動作
+                </div>
+
+                <div class="space-y-4">
+                    <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                        任務：<span id="focus-task-title-display" class="text-slate-700 dark:text-slate-300">未命名任務</span>
+                    </div>
+
+                    <!-- Large Display of Truncated First Step -->
+                    <div class="p-4 sm:p-5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80">
+                        <p id="focus-micro-action-text" class="text-xl sm:text-2xl font-bold text-brand-700 dark:text-brand-400 leading-snug">
+                            打開 Canva 並選擇一個模板
+                        </p>
+                    </div>
+
+                    <!-- Summary details accordion toggle -->
+                    <details class="group text-xs text-slate-500 dark:text-slate-400">
+                        <summary class="cursor-pointer hover:text-slate-800 dark:hover:text-slate-200 font-medium flex items-center space-x-1 select-none">
+                            <span>查看剛才拆解的背景資訊</span>
+                            <svg class="w-3.5 h-3.5 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </summary>
+                        <div id="focus-summary-details" class="mt-3 p-3 rounded-lg bg-slate-100 dark:bg-slate-800/50 space-y-1.5 text-xs">
+                            <!-- JS filled -->
+                        </div>
+                    </details>
+                </div>
+
+                <!-- Focus Timer Component -->
+                <div class="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800 flex flex-col items-center space-y-4">
+                    <div class="text-center">
+                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">5 分鐘極速啟動計時</span>
+                        <div id="focus-timer-display" class="text-4xl sm:text-5xl font-black font-mono tracking-wider text-slate-900 dark:text-white mt-1">
+                            05:00
+                        </div>
+                    </div>
+
+                    <!-- Timer Controls -->
+                    <div class="flex items-center space-x-3">
+                        <button id="btn-timer-toggle" onclick="app.toggleTimer()" class="px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm shadow-md transition-all flex items-center space-x-2">
+                            <svg id="timer-play-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <span id="timer-toggle-label">開始衝刺</span>
+                        </button>
+                        <button onclick="app.resetTimer()" class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors" title="重設時間">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Complete Task & Utility Buttons -->
+            <div class="flex flex-col sm:flex-row gap-3">
+                <button onclick="app.completeTask()" class="flex-1 py-3.5 px-4 rounded-xl bg-gradient-to-r from-brand-600 to-emerald-600 hover:from-brand-700 hover:to-emerald-700 text-white font-bold text-sm shadow-lg shadow-brand-500/20 transition-all flex items-center justify-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span>我已完成第一步，記錄成就！</span>
+                </button>
+                <button onclick="app.copyTaskSummary()" class="py-3.5 px-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-sm transition-colors flex items-center justify-center space-x-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+                    <span>複製摘要</span>
+                </button>
+                <button onclick="app.resetToHome()" class="py-3.5 px-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 font-semibold text-sm transition-colors">
+                    重新拆解
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- History & Achievements Modal -->
+    <div id="modal-history" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden animate-fade-in">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full p-6 border border-slate-200 dark:border-slate-800 shadow-2xl space-y-4 max-h-[85vh] flex flex-col">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 rounded-lg bg-brand-100 dark:bg-brand-950 text-brand-600 dark:text-brand-400 flex items-center justify-center font-bold">
+                        🏆
+                    </div>
+                    <h3 class="font-bold text-lg text-slate-900 dark:text-white">歷史成就與紀錄</h3>
+                </div>
+                <button onclick="app.toggleHistoryModal(false)" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <div class="flex-grow overflow-y-auto space-y-3 pr-1" id="history-list-container">
+                <!-- History items populated dynamically -->
+            </div>
+
+            <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-xs text-slate-500">
+                <span>總計突破卡點：<strong id="history-count-badge" class="text-brand-600 dark:text-brand-400 font-bold">0</strong> 次</span>
+                <button onclick="app.clearHistory()" class="text-red-500 hover:underline">清除紀錄</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast Message Container -->
+    <div id="toast-message" class="fixed bottom-6 right-6 z-50 bg-slate-900 text-white dark:bg-white dark:text-slate-900 px-4 py-3 rounded-xl shadow-xl text-sm font-semibold transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none flex items-center space-x-2">
+        <span id="toast-text">已複製成功！</span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="w-full py-4 text-center text-xs text-slate-400 dark:text-slate-600 border-t border-slate-200/50 dark:border-slate-800/50">
+        FocusStep · 一步一腳印，消滅萬能拖延症
+    </footer>
+
+    <script>
+        /**
+         * FocusStep Anti-Procrastination Application Core
+         * Client-side zero-dependency interactive wizard
+         */
+        const WIZARD_CONFIG = {
+            A: {
+                name: "產出型",
+                badgeClass: "bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300",
+                questions: [
+                    {
+                        title: "這個產出最終要達到的「核心目的」是什麼？",
+                        desc: "用一句話或幾個關鍵字回答即可（例如：讓客人知道延期 / 邀請親友來參加）。",
+                        placeholder: "例如：製作一份讓校友清楚時間流程的邀請海報...",
+                        hints: ["讓客戶知道專案延期與補償", "邀請校友參加週年校慶", "整理上月專案的進度與結果"]
+                    },
+                    {
+                        title: "接收者看完最需要知道的「2~3 個核心資訊」是什麼？",
+                        desc: "直接列出關鍵字就好，不用思考寫作結構。",
+                        placeholder: "例如：時間地點、活動內容大綱、報名連結...",
+                        hints: ["時間地點 / 費用 / 報名方式", "延期原因 / 預計交付日期", "專案成效 / 下季計畫"]
+                    },
+                    {
+                        title: "現在能完成的最小「物理動作」是什麼？",
+                        desc: "最容易打開大腦運轉的第 1 個微動作（若輸入多個步驟，系統會自動截斷只留第一個）。",
+                        placeholder: "例如：打開 Canva 選擇模板，然後複製資訊，最後檢查...",
+                        hints: ["打開 Word 寫下標題", "打開 Canva 選擇模板", "打開 Gmail 輸入收件人地址"]
+                    }
+                ]
+            },
+            B: {
+                name: "決策型",
+                badgeClass: "bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300",
+                questions: [
+                    {
+                        title: "你現在手上有哪幾個「主要選項」？",
+                        desc: "列出目前讓你猶豫不決的選項（2~3 個即可）。",
+                        placeholder: "例如：選項A（廠商甲）/ 選項B（廠商乙）...",
+                        hints: ["方案 A / 方案 B", "買新手機 / 繼續修舊手機", "去日本旅遊 / 去泰國旅遊"]
+                    },
+                    {
+                        title: "你最在意的「2 個評估條件」是什麼？",
+                        desc: "例如：價格、時間成本、品質、舒適度。",
+                        placeholder: "例如：價格要低於預算、能在這週完成...",
+                        hints: ["總預算高低", "所需時間成本", "售後服務與品質"]
+                    },
+                    {
+                        title: "現在能做的最小「驗證微動作」是什麼？",
+                        desc: "只需要獲取關鍵數據或問一個問題（系統會自動截斷只留第 1 步）。",
+                        placeholder: "例如：上網搜尋 key word 比較價格、問一下朋友體驗...",
+                        hints: ["打開網站查詢選項A價格", "傳訊息問小明的使用體驗", "畫一個兩欄表格比較缺點"]
+                    }
+                ]
+            },
+            C: {
+                name: "執行型",
+                badgeClass: "bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300",
+                questions: [
+                    {
+                        title: "要處理的「最小實體/物理區域」在哪裡？",
+                        desc: "縮小範圍！不要想整個房間，只選一個小角落。",
+                        placeholder: "例如：書桌左邊的抽屜、電腦桌面 Downloads 資料夾...",
+                        hints: ["書桌左上方 50 公分區域", "手機相冊近一週的截圖", "發票與收據堆放的小盒子"]
+                    },
+                    {
+                        title: "你需要準備的「唯一工具」是什麼？",
+                        desc: "先拿到手上或開啟，準備就緒。",
+                        placeholder: "例如：一個垃圾袋、剪刀、檔案整理夾...",
+                        hints: ["一個黑色大垃圾袋", "桌面集線器 / 分類夾", "掃描報帳 App"]
+                    },
+                    {
+                        title: "未來 5 分鐘只專注的「第一個微動作」是什麼？",
+                        desc: "時間一到就停，不強求做完（系統會截斷多餘步驟）。",
+                        placeholder: "例如：拿垃圾袋把桌上的廢紙丟掉...",
+                        hints: ["把桌上所有的空飲料瓶丟進回收袋", "刪除 Downloads 資料夾前 10 個舊檔", "把發票按月份疊好"]
+                    }
+                ]
+            }
+        };
+
+        class AntiProcrastinationApp {
+            constructor() {
+                this.currentCategory = null; // 'A', 'B', 'C'
+                this.currentQuestionIndex = 0;
+                this.answers = [];
+                this.taskTitle = "";
+                this.timerInterval = null;
+                this.timerSeconds = 300; // 5 mins
+                this.timerRunning = false;
+                
+                this.init();
+            }
+
+            init() {
+                this.loadDarkModePreference();
+                this.renderHistoryList();
+            }
+
+            // --- Theme Management ---
+            toggleDarkMode() {
+                const isDark = document.documentElement.classList.toggle('dark');
+                localStorage.setItem('focusstep_theme', isDark ? 'dark' : 'light');
+                this.updateThemeIcons(isDark);
+            }
+
+            loadDarkModePreference() {
+                const savedTheme = localStorage.getItem('focusstep_theme');
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                const isDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+                if (isDark) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+                this.updateThemeIcons(isDark);
+            }
+
+            updateThemeIcons(isDark) {
+                document.getElementById('theme-icon-sun').classList.toggle('hidden', !isDark);
+                document.getElementById('theme-icon-moon').classList.toggle('hidden', isDark);
+            }
+
+            // --- Navigation & Flow ---
+            resetToHome() {
+                this.clearIntervalTimer();
+                document.getElementById('view-step-select').classList.remove('hidden');
+                document.getElementById('view-wizard-question').classList.add('hidden');
+                document.getElementById('view-action-focus').classList.add('hidden');
+                this.currentCategory = null;
+                this.currentQuestionIndex = 0;
+                this.answers = [];
+            }
+
+            quickTemplate(title, category) {
+                document.getElementById('input-task-name').value = title;
+                this.startWizard(category);
+            }
+
+            startWizard(category) {
+                this.currentCategory = category;
+                this.currentQuestionIndex = 0;
+                this.answers = [];
+                this.taskTitle = document.getElementById('input-task-name').value.trim() || "這件事";
+
+                document.getElementById('view-step-select').classList.add('hidden');
+                document.getElementById('view-wizard-question').classList.remove('hidden');
+
+                const config = WIZARD_CONFIG[category];
+                const badge = document.getElementById('wizard-category-badge');
+                badge.textContent = config.name;
+                badge.className = `px-2.5 py-0.5 rounded-full text-xs font-bold ${config.badgeClass}`;
+
+                this.renderQuestion();
+            }
+
+            renderQuestion() {
+                const config = WIZARD_CONFIG[this.currentCategory];
+                const qData = config.questions[this.currentQuestionIndex];
+
+                // Progress update
+                const total = config.questions.length;
+                const stepNum = this.currentQuestionIndex + 1;
+                document.getElementById('wizard-progress-text').textContent = `步驟 ${stepNum} / ${total}`;
+                document.getElementById('wizard-progress-bar').style.width = `${(stepNum / total) * 100}%`;
+
+                // Title & Desc
+                document.getElementById('wizard-question-title').textContent = qData.title;
+                document.getElementById('wizard-question-desc').textContent = qData.desc;
+
+                // Input Field
+                const inputField = document.getElementById('wizard-input-field');
+                inputField.placeholder = qData.placeholder;
+                inputField.value = this.answers[this.currentQuestionIndex] || "";
+                
+                // Focus input smoothly
+                setTimeout(() => inputField.focus(), 150);
+
+                // Render Hints
+                const hintsContainer = document.getElementById('wizard-hints-container');
+                hintsContainer.innerHTML = `<span class="text-xs text-slate-400 dark:text-slate-500">快速填入範例：</span>`;
+                qData.hints.forEach(hint => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'px-2.5 py-1 text-xs rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors';
+                    btn.textContent = hint;
+                    btn.onclick = () => {
+                        inputField.value = hint;
+                        inputField.focus();
+                    };
+                    hintsContainer.appendChild(btn);
+                });
+            }
+
+            nextQuestion() {
+                const inputVal = document.getElementById('wizard-input-field').value.trim();
+                if (!inputVal) {
+                    this.showToast("請隨意填入幾個字，跨出大腦的第一步！");
+                    return;
+                }
+
+                this.answers[this.currentQuestionIndex] = inputVal;
+                const totalQuestions = WIZARD_CONFIG[this.currentCategory].questions.length;
+
+                if (this.currentQuestionIndex < totalQuestions - 1) {
+                    this.currentQuestionIndex++;
+                    this.renderQuestion();
+                } else {
+                    // Completed wizard -> go to focus stage
+                    this.renderFocusStage();
+                }
+            }
+
+            prevQuestion() {
+                if (this.currentQuestionIndex > 0) {
+                    this.currentQuestionIndex--;
+                    this.renderQuestion();
+                } else {
+                    this.resetToHome();
+                }
+            }
+
+            // --- Truncation & Focus Card Generation ---
+            /**
+             * Truncates long chained tasks (e.g., "打開Canva, 選擇模板, 填充信息, 修改調整")
+             * into ONLY the first physical micro-action.
+             */
+            truncateToMicroAction(rawText) {
+                if (!rawText) return "開始執行第一步";
+                // Split by common Chinese/English delimiters like comma, arrow, '然後', '接著', etc.
+                const delimiters = /[,，=>→\n]|然後|接著|再|並且|最後/;
+                const parts = rawText.split(delimiters).map(p => p.trim()).filter(Boolean);
+
+                if (parts.length > 0) {
+                    let firstAction = parts[0];
+                    // Clean up step prefixes like "1.", "步驟一"
+                    firstAction = firstAction.replace(/^(1[\.、]|步驟一[:：]?)/, '').trim();
+                    return firstAction;
+                }
+                return rawText;
+            }
+
+            renderFocusStage() {
+                document.getElementById('view-wizard-question').classList.add('hidden');
+                document.getElementById('view-action-focus').classList.remove('hidden');
+
+                const rawThirdAnswer = this.answers[2] || "";
+                const truncatedAction = this.truncateToMicroAction(rawThirdAnswer);
+
+                document.getElementById('focus-task-title-display').textContent = this.taskTitle;
+                document.getElementById('focus-micro-action-text').textContent = truncatedAction;
+
+                // Render Accordion details
+                const config = WIZARD_CONFIG[this.currentCategory];
+                const summaryContainer = document.getElementById('focus-summary-details');
+                summaryContainer.innerHTML = `
+                    <p><strong>1. ${config.questions[0].title}</strong><br><span class="text-slate-600 dark:text-slate-300">${this.escapeHtml(this.answers[0])}</span></p>
+                    <p class="pt-1"><strong>2. ${config.questions[1].title}</strong><br><span class="text-slate-600 dark:text-slate-300">${this.escapeHtml(this.answers[1])}</span></p>
+                    <p class="pt-1"><strong>3. 原始設定步驟：</strong><br><span class="text-slate-400 line-through">${this.escapeHtml(rawThirdAnswer)}</span></p>
+                `;
+
+                // Reset & Setup Timer
+                this.resetTimer();
+            }
+
+            // --- Timer Logic & Audio Notification ---
+            toggleTimer() {
+                if (this.timerRunning) {
+                    this.pauseTimer();
+                } else {
+                    this.startTimer();
+                }
+            }
+
+            startTimer() {
+                this.timerRunning = true;
+                document.getElementById('timer-toggle-label').textContent = "暫停";
+                document.getElementById('timer-play-icon').innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/>`;
+
+                this.timerInterval = setInterval(() => {
+                    if (this.timerSeconds > 0) {
+                        this.timerSeconds--;
+                        this.updateTimerDisplay();
+                    } else {
+                        this.timerFinished();
+                    }
+                }, 1000);
+            }
+
+            pauseTimer() {
+                this.timerRunning = false;
+                this.clearIntervalTimer();
+                document.getElementById('timer-toggle-label').textContent = "繼續衝刺";
+                document.getElementById('timer-play-icon').innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>`;
+            }
+
+            resetTimer() {
+                this.pauseTimer();
+                this.timerSeconds = 300; // 5 mins reset
+                this.updateTimerDisplay();
+            }
+
+            clearIntervalTimer() {
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                    this.timerInterval = null;
+                }
+            }
+
+            updateTimerDisplay() {
+                const mins = Math.floor(this.timerSeconds / 60);
+                const secs = this.timerSeconds % 60;
+                document.getElementById('focus-timer-display').textContent = 
+                    `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            }
+
+            timerFinished() {
+                this.pauseTimer();
+                this.playChimeSound();
+                this.showToast("🎉 5 分鐘衝刺結束！你已經成功突破了最艱難的開始！");
+            }
+
+            // Synthesize pleasant sound with Web Audio API (No external sound files needed!)
+            playChimeSound() {
+                try {
+                    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+                    osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.3); // A5
+                    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.8);
+                } catch(e) {
+                    // Ignore audio context autoplay restrictions gracefully
+                }
+            }
+
+            // --- History & Persistence ---
+            completeTask() {
+                const microAction = document.getElementById('focus-micro-action-text').textContent;
+                const record = {
+                    id: Date.now(),
+                    title: this.taskTitle,
+                    action: microAction,
+                    category: WIZARD_CONFIG[this.currentCategory].name,
+                    date: new Date().toLocaleDateString('zh-TW', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+                };
+
+                const history = this.getHistory();
+                history.unshift(record);
+                localStorage.setItem('focusstep_history', JSON.stringify(history));
+
+                this.playChimeSound();
+                this.showToast("🏆 太棒了！已將此微動作加入你的成就列表！");
+                this.renderHistoryList();
+                this.toggleHistoryModal(true);
+            }
+
+            getHistory() {
+                try {
+                    return JSON.parse(localStorage.getItem('focusstep_history')) || [];
+                } catch(e) {
+                    return [];
+                }
+            }
+
+            renderHistoryList() {
+                const history = this.getHistory();
+                const container = document.getElementById('history-list-container');
+                document.getElementById('history-count-badge').textContent = history.length;
+
+                if (history.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8 text-slate-400 text-sm">
+                            尚無歷史紀錄。現在就完成第一個微動作吧！
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = history.map(item => `
+                    <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 space-y-1">
+                        <div class="flex items-center justify-between text-xs text-slate-400">
+                            <span class="font-semibold text-brand-600 dark:text-brand-400">[${this.escapeHtml(item.category)}] ${this.escapeHtml(item.title)}</span>
+                            <span>${item.date}</span>
+                        </div>
+                        <p class="text-sm font-bold text-slate-800 dark:text-slate-200">
+                            ${this.escapeHtml(item.action)}
+                        </p>
+                    </div>
+                `).join('');
+            }
+
+            clearHistory() {
+                localStorage.removeItem('focusstep_history');
+                this.renderHistoryList();
+                this.showToast("紀錄已清除");
+            }
+
+            toggleHistoryModal(show) {
+                document.getElementById('modal-history').classList.toggle('hidden', !show);
+            }
+
+            // --- Clipboard Copy ---
+            copyTaskSummary() {
+                const title = this.taskTitle;
+                const action = document.getElementById('focus-micro-action-text').textContent;
+                const textToCopy = `【FocusStep 任務微拆解】\n任務：${title}\n當前唯一微動作：${action}\n狀態：準備開始 5 分鐘衝刺！`;
+
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(textToCopy);
+                } else {
+                    // Fallback for iframe / strict environments
+                    const textarea = document.createElement('textarea');
+                    textarea.value = textToCopy;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                }
+
+                this.showToast("已複製任務摘要到剪貼簿！");
+            }
+
+            // --- Helper Utilities ---
+            showToast(message) {
+                const toast = document.getElementById('toast-message');
+                document.getElementById('toast-text').textContent = message;
+                toast.classList.remove('translate-y-20', 'opacity-0');
+                toast.classList.add('translate-y-0', 'opacity-100');
+
+                setTimeout(() => {
+                    toast.classList.remove('translate-y-0', 'opacity-100');
+                    toast.classList.add('translate-y-20', 'opacity-0');
+                }, 3000);
+            }
+
+            escapeHtml(str) {
+                if (!str) return '';
+                return str.replace(/[&<>"']/g, function(m) {
+                    return {
+                        '&': '&amp;',
+                        '<': '&lt;',
+                        '>': '&gt;',
+                        '"': '&quot;',
+                        "'": '&#039;'
+                    }[m];
+                });
+            }
+        }
+
+        // Initialize App on window load
+        let app;
+        window.onload = function() {
+            app = new AntiProcrastinationApp();
+        };
+    </script>
+</body>
+</html>
