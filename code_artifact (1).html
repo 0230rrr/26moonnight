@@ -460,6 +460,7 @@
                 this.taskTitle = "";
                 this.timerInterval = null;
                 this.timerSeconds = 300; // 5 mins
+                this.timerEndTime = null; // Absolute target timestamp
                 this.timerRunning = false;
                 
                 this.init();
@@ -468,100 +469,12 @@
             init() {
                 this.loadDarkModePreference();
                 this.renderHistoryList();
-            }
 
-            // --- Theme Management ---
-            toggleDarkMode() {
-                const isDark = document.documentElement.classList.toggle('dark');
-                localStorage.setItem('focusstep_theme', isDark ? 'dark' : 'light');
-                this.updateThemeIcons(isDark);
-            }
-
-            loadDarkModePreference() {
-                const savedTheme = localStorage.getItem('focusstep_theme');
-                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                const isDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
-                if (isDark) {
-                    document.documentElement.classList.add('dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
-                }
-                this.updateThemeIcons(isDark);
-            }
-
-            updateThemeIcons(isDark) {
-                document.getElementById('theme-icon-sun').classList.toggle('hidden', !isDark);
-                document.getElementById('theme-icon-moon').classList.toggle('hidden', isDark);
-            }
-
-            // --- Navigation & Flow ---
-            resetToHome() {
-                this.clearIntervalTimer();
-                document.getElementById('view-step-select').classList.remove('hidden');
-                document.getElementById('view-wizard-question').classList.add('hidden');
-                document.getElementById('view-action-focus').classList.add('hidden');
-                this.currentCategory = null;
-                this.currentQuestionIndex = 0;
-                this.answers = [];
-            }
-
-            quickTemplate(title, category) {
-                document.getElementById('input-task-name').value = title;
-                this.startWizard(category);
-            }
-
-            startWizard(category) {
-                this.currentCategory = category;
-                this.currentQuestionIndex = 0;
-                this.answers = [];
-                this.taskTitle = document.getElementById('input-task-name').value.trim() || "這件事";
-
-                document.getElementById('view-step-select').classList.add('hidden');
-                document.getElementById('view-wizard-question').classList.remove('hidden');
-
-                const config = WIZARD_CONFIG[category];
-                const badge = document.getElementById('wizard-category-badge');
-                badge.textContent = config.name;
-                badge.className = `px-2.5 py-0.5 rounded-full text-xs font-bold ${config.badgeClass}`;
-
-                this.renderQuestion();
-            }
-
-            renderQuestion() {
-                const config = WIZARD_CONFIG[this.currentCategory];
-                const qData = config.questions[this.currentQuestionIndex];
-
-                // Progress update
-                const total = config.questions.length;
-                const stepNum = this.currentQuestionIndex + 1;
-                document.getElementById('wizard-progress-text').textContent = `步驟 ${stepNum} / ${total}`;
-                document.getElementById('wizard-progress-bar').style.width = `${(stepNum / total) * 100}%`;
-
-                // Title & Desc
-                document.getElementById('wizard-question-title').textContent = qData.title;
-                document.getElementById('wizard-question-desc').textContent = qData.desc;
-
-                // Input Field
-                const inputField = document.getElementById('wizard-input-field');
-                inputField.placeholder = qData.placeholder;
-                inputField.value = this.answers[this.currentQuestionIndex] || "";
-                
-                // Focus input smoothly
-                setTimeout(() => inputField.focus(), 150);
-
-                // Render Hints
-                const hintsContainer = document.getElementById('wizard-hints-container');
-                hintsContainer.innerHTML = `<span class="text-xs text-slate-400 dark:text-slate-500">快速填入範例：</span>`;
-                qData.hints.forEach(hint => {
-                    const btn = document.createElement('button');
-                    btn.type = 'button';
-                    btn.className = 'px-2.5 py-1 text-xs rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors';
-                    btn.textContent = hint;
-                    btn.onclick = () => {
-                        inputField.value = hint;
-                        inputField.focus();
-                    };
-                    hintsContainer.appendChild(btn);
+                // Handle tab switching / background wake-up for precise timer sync
+                document.addEventListener('visibilitychange', () => {
+                    if (document.visibilityState === 'visible' && this.timerRunning) {
+                        this.tickTimer();
+                    }
                 });
             }
 
@@ -647,21 +560,39 @@
 
             startTimer() {
                 this.timerRunning = true;
+                // Calculate absolute end timestamp using current system time
+                this.timerEndTime = Date.now() + (this.timerSeconds * 1000);
+                
                 document.getElementById('timer-toggle-label').textContent = "暫停";
                 document.getElementById('timer-play-icon').innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/>`;
 
+                // Update UI immediately and start frequent polling
+                this.tickTimer();
                 this.timerInterval = setInterval(() => {
-                    if (this.timerSeconds > 0) {
-                        this.timerSeconds--;
-                        this.updateTimerDisplay();
-                    } else {
-                        this.timerFinished();
-                    }
-                }, 1000);
+                    this.tickTimer();
+                }, 250); // Polling every 250ms for smooth update without cumulative drift
+            }
+
+            tickTimer() {
+                if (!this.timerRunning || !this.timerEndTime) return;
+                
+                const now = Date.now();
+                const remaining = Math.max(0, Math.ceil((this.timerEndTime - now) / 1000));
+                this.timerSeconds = remaining;
+                this.updateTimerDisplay();
+
+                if (remaining <= 0) {
+                    this.timerFinished();
+                }
             }
 
             pauseTimer() {
+                if (this.timerRunning && this.timerEndTime) {
+                    // Save accurate remaining seconds when paused
+                    this.timerSeconds = Math.max(0, Math.ceil((this.timerEndTime - Date.now()) / 1000));
+                }
                 this.timerRunning = false;
+                this.timerEndTime = null;
                 this.clearIntervalTimer();
                 document.getElementById('timer-toggle-label').textContent = "繼續衝刺";
                 document.getElementById('timer-play-icon').innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>`;
@@ -670,6 +601,7 @@
             resetTimer() {
                 this.pauseTimer();
                 this.timerSeconds = 300; // 5 mins reset
+                this.timerEndTime = null;
                 this.updateTimerDisplay();
             }
 
